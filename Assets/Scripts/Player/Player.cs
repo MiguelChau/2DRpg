@@ -1,14 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections;
 using UnityEngine;
 
 //Componente principal do jogador
-public class Player : MonoBehaviour
+public class Player : Entity
 {
     [Header("Attack Details")]
     public Vector2[] attackMovement; //define os movimentos associados ao ataques
-    public bool isBusy {  get; private set; } //para indicar se o jogador está ocupado com alguma ação
+    public bool isBusy { get; private set; } //para indicar se o jogador está ocupado com alguma ação
 
     [Header("Movement")] //variaveis para movimento e salto
     public float moveSpeed = 5f;
@@ -21,21 +19,6 @@ public class Player : MonoBehaviour
     public float dashDur;
     public float dashDir { get; private set; }
 
-    [Header("Collision")] //variaveis de detenção de colisao, do chão e das paredes
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundCheckDis;
-    [SerializeField] private Transform wallCheck;
-    [SerializeField] private float wallCheckDis;
-    [SerializeField] private LayerMask whatIsGround;
-
-    public int facingDir { get; private set; } = 1;
-    private bool facingRight = true;
-
-    #region Components
-    public Animator anim { get; private set; }
-    public Rigidbody2D rb { get; private set; }
-    #endregion
-
     #region States 
     //Instancia os diferentes estados do jogador no metodo do Awake
     public PlayerStateMachine stateMachine { get; private set; }
@@ -45,14 +28,16 @@ public class Player : MonoBehaviour
     public PlayerJumpState jumpState { get; private set; }
     public PlayerAirState airState { get; private set; }
     public PlayerWallSlideState wallSlideState { get; private set; }
-    public PlayerJumpWallState wallJumpState {  get; private set; }
+    public PlayerJumpWallState wallJumpState { get; private set; }
     public PlayerDashState dashState { get; private set; }
 
-    public PrimaryAttackState primaryAttackState { get; private set; }    
+    public PrimaryAttackState primaryAttackState { get; private set; }
     #endregion
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         stateMachine = new PlayerStateMachine();
 
         idleState = new PlayerIdleState(this, stateMachine, "Idle");
@@ -66,17 +51,18 @@ public class Player : MonoBehaviour
         primaryAttackState = new PrimaryAttackState(this, stateMachine, "Attack");
     }
 
-    private void Start()
+    protected override void Start()
     {
-        anim = GetComponentInChildren<Animator>();
-        rb = GetComponent<Rigidbody2D>();
+        base.Start();
 
         stateMachine.Init(idleState);
 
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
         stateMachine.currentState.Update();
         CheckDashInput();
     }
@@ -110,45 +96,6 @@ public class Player : MonoBehaviour
             stateMachine.ChangeState(dashState);
         }
     }
-    #region Velocity
 
-    //Métodos para manipular a velocidade, verificar colisões e inverter a direção do jogador.
-    public void ZeroVelocity()
-    {
-        rb.velocity = new Vector2(0, 0);
-    }
-    public void SetVelocity(float _xVelocity, float _yVelocity)
-    {
-        rb.velocity = new Vector2(_xVelocity, _yVelocity);
-        FlipRotate(_xVelocity);
-    }
-    #endregion
 
-    #region Collision
-    public bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDis, whatIsGround);
-    public bool isWallDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDis, whatIsGround);
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDis));
-        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDis, wallCheck.position.y));
-    }
-    #endregion
-
-    #region Flip
-    public void Flip()
-    {
-        facingDir = facingDir * -1;
-        facingRight = !facingRight;
-        transform.Rotate(0, 180, 0);
-    }
-
-    public void FlipRotate(float _x)
-    {
-        if (_x > 0 && !facingRight)
-            Flip();
-        else if (_x < 0 && facingRight)
-            Flip();
-    }
-    #endregion
 }

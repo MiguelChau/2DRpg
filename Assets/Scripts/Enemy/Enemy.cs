@@ -2,22 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Entity
 {
-    #region COMPONENTS
-    public Animator anim { get; private set; }
-    public Rigidbody2D rb { get; private set; }
-    #endregion
+    [SerializeField] protected LayerMask whereIsPlayer; //Para detectar o player
+
+    [Header("Move Info")]
+    public float moveSpeed;
+    public float idleTime;
+    public float battleTime;
+
+    [Header("Attack Info")]
+    public float attackDist;
+    public float attackCooldown;
+    [HideInInspector] public float lastTimeAttacked;
+
 
     public EnemyStateMachine stateMachine { get; private set; }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         stateMachine = new EnemyStateMachine();
     }
 
-    private void Update()
+    protected override void Start()
     {
-        stateMachine.currentState.Update();
+        base.Start();
     }
+    protected override void Update()
+    {
+
+        base .Update();
+
+        stateMachine.currentState.Update();
+
+    }
+
+    public virtual void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
+
+    protected override void OnDrawGizmos()
+    {
+        base.OnDrawGizmos();
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, new Vector3(transform.position.x + attackDist * facingDir, transform.position.y));
+    }
+
+    public virtual RaycastHit2D IsPlayerDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, 50, whereIsPlayer);
 }

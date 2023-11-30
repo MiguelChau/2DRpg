@@ -51,7 +51,7 @@ public class PrimaryAttackState : PlayerStates
         base.Update();
 
         if (stateTimer < 0) //reeduz o temporizador de estado
-            player.ZeroVelocity();   //zera a velocidade quando o tempo acaba , passado para o Enter do idlestate
+            player.SetZeroVelocity();   //zera a velocidade quando o tempo acaba , passado para o Enter do idlestate
 
         if (triggerCalled) //quando da trigger na ultima animaçao do ataque, passa para o idlestate
             stateMachine.ChangeState(player.idleState);
