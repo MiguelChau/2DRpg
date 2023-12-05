@@ -4,29 +4,29 @@ using UnityEngine;
 
 public class SkeletonBattleState : EnemyStates
 {
-    private Transform player;
+    private Transform player; //referencia ao jogador
     private  EnemySkeleton enemy;
     private int moveDir;
-    public SkeletonBattleState(Enemy _enemyBase, EnemyStateMachine enemyStateMachine, string animBoolName, EnemySkeleton enemy) : base(_enemyBase, enemyStateMachine, animBoolName)
+    public SkeletonBattleState(Enemy _enemyBase, EnemyStateMachine enemyStateMachine, string animBoolName, EnemySkeleton _enemy) : base(_enemyBase, enemyStateMachine, animBoolName)
     {
-        this.enemy = enemy;
+        this.enemy = _enemy;
     }
 
     public override void Enter()
     {
         base.Enter();
 
-        player = GameObject.Find("Player").transform;
+        player = PlayerManager.instance.player.transform;
     }
     public override void Update()
     {
         base.Update();
 
-        if(enemy.IsPlayerDetected())
+        if(enemy.IsPlayerDetected()) //verifica se há detecçao
         {
             stateTimer = enemy.battleTime;
 
-            if(enemy.IsPlayerDetected().distance < enemy.attackDist)
+            if(enemy.IsPlayerDetected().distance < enemy.attackDist) //se o jogador estiver dentro das distancia, verifica se pode atacar
             {
                 if(CanAttack())
                     enemyStateMachine.ChangeState(enemy.attackState);
@@ -34,11 +34,11 @@ public class SkeletonBattleState : EnemyStates
         }
         else
         {
-            if (stateTimer < 0 || Vector2.Distance(player.transform.position, enemy.transform.position) > 10)
+            if (stateTimer < 0 || Vector2.Distance(player.transform.position, enemy.transform.position) > 10) //se nao estiver na distancia e tiver fora de alcance, fica no estado idle
                 enemyStateMachine.ChangeState(enemy.idleState);
         }
 
-        if (player.position.x > enemy.transform.position.x)
+        if (player.position.x > enemy.transform.position.x) //atualiza a direçao do movimento do inimigo em direçao ao jogador
             moveDir = 1;
         else if (player.position.x < enemy.transform.position.x)
             moveDir = -1;
@@ -51,7 +51,7 @@ public class SkeletonBattleState : EnemyStates
         base.Exit();
     }
 
-    private bool CanAttack()
+    private bool CanAttack() //verifica se o inimigo pode atacar consoante o tempo de cooldown
     {
         if(Time.time >= enemy.lastTimeAttacked + enemy.attackCooldown)
         {

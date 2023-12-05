@@ -6,18 +6,22 @@ public class Player : Entity
 {
     [Header("Attack Details")]
     public Vector2[] attackMovement; //define os movimentos associados ao ataques
+    public float counterAttackDur = .2f;
     public bool isBusy { get; private set; } //para indicar se o jogador está ocupado com alguma ação
 
     [Header("Movement")] //variaveis para movimento e salto
     public float moveSpeed = 5f;
     public float jumpForce;
+    public float swordReturnImpact;
 
     [Header("Special Dash")] //variaveis para special dash
-    [SerializeField] private float dashCooldown;
-    private float dashUsageTimer;
     public float dashSpeed;
     public float dashDur;
     public float dashDir { get; private set; }
+
+    
+    public SkillManager skill { get; private set; }
+    public GameObject sword { get; private set; }
 
     #region States 
     //Instancia os diferentes estados do jogador no metodo do Awake
@@ -30,8 +34,10 @@ public class Player : Entity
     public PlayerWallSlideState wallSlideState { get; private set; }
     public PlayerJumpWallState wallJumpState { get; private set; }
     public PlayerDashState dashState { get; private set; }
-
     public PrimaryAttackState primaryAttackState { get; private set; }
+    public PlayerCounterAttackState counterAttackState { get; private set; }
+    public PlayerAimSwordState aimSwordState { get; private set; }
+    public PlayerCatchSwordState catchSwordState { get; private set; }
     #endregion
 
     protected override void Awake()
@@ -49,11 +55,18 @@ public class Player : Entity
         wallJumpState = new PlayerJumpWallState(this, stateMachine, "Jump");
 
         primaryAttackState = new PrimaryAttackState(this, stateMachine, "Attack");
+        counterAttackState = new PlayerCounterAttackState(this, stateMachine, "CounterAttack");
+
+        aimSwordState = new PlayerAimSwordState(this, stateMachine, "AimSword");
+        catchSwordState = new PlayerCatchSwordState(this, stateMachine, "CatchSword");
     }
 
     protected override void Start()
     {
         base.Start();
+
+        skill = SkillManager.instance;
+
 
         stateMachine.Init(idleState);
 
@@ -64,7 +77,19 @@ public class Player : Entity
         base.Update();
 
         stateMachine.currentState.Update();
+
         CheckDashInput();
+    }
+
+    public void AssignNewSword(GameObject _newSword)
+    {
+        sword = _newSword;
+    }
+
+    public void CatchTheSword()
+    {
+        stateMachine.ChangeState(catchSwordState);
+        Destroy(sword);
     }
 
     public IEnumerator BusyFor(float _sec) //Coroutine para definir o jogador como ocupado
@@ -83,11 +108,9 @@ public class Player : Entity
         if (isWallDetected())
             return;
 
-        dashUsageTimer -= Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.Z) && dashUsageTimer < 0)
+        if (Input.GetKeyDown(KeyCode.Z) && SkillManager.instance.dash.CanUseSkill())
         {
-            dashUsageTimer = dashCooldown;
             dashDir = Input.GetAxisRaw("Horizontal");
 
             if (dashDir == 0)

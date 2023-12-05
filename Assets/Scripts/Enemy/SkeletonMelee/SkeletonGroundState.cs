@@ -7,16 +7,16 @@ public class SkeletonGroundState : EnemyStates
     protected EnemySkeleton enemy;
     protected Transform player;
 
-    public SkeletonGroundState(Enemy _enemyBase, EnemyStateMachine enemyStateMachine, string animBoolName, EnemySkeleton enemy) : base(_enemyBase, enemyStateMachine, animBoolName)
+    public SkeletonGroundState(Enemy _enemyBase, EnemyStateMachine enemyStateMachine, string animBoolName, EnemySkeleton _enemy) : base(_enemyBase, enemyStateMachine, animBoolName)
     {
-        this.enemy = enemy;
+        this.enemy = _enemy;
     }
 
     public override void Enter()
     {
         base.Enter();
 
-        player = GameObject.Find("Player").transform;
+        player = PlayerManager.instance.player.transform;
     }
     public override void Update()
     {

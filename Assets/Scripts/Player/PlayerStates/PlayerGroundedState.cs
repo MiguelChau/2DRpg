@@ -23,6 +23,12 @@ public class PlayerGroundedState : PlayerStates
     {
         base.Update();
 
+        if (Input.GetKeyDown(KeyCode.Mouse1) && HasNoSword())
+            stateMachine.ChangeState(player.aimSwordState);
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            stateMachine.ChangeState(player.counterAttackState);
+
         if (Input.GetKeyDown(KeyCode.Alpha1)) //Se a tecla 1 for pressionado, muda o estado para ataque primário
             stateMachine.ChangeState(player.primaryAttackState);
 
@@ -31,5 +37,16 @@ public class PlayerGroundedState : PlayerStates
 
         if (Input.GetKeyDown(KeyCode.Space) && player.IsGroundDetected()) //Quando pressionado Space e existir detençao de solo, muda para o State de jump
             stateMachine.ChangeState(player.jumpState);
+    }
+
+    private bool HasNoSword()
+    {
+        if (!player.sword)
+        {
+            return true;
+        }
+
+        player.sword.GetComponent<SwordSkillController>().ReturnSword();
+        return false;
     }
 }

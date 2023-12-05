@@ -21,9 +21,9 @@ public class PlayerMoveState : PlayerGroundedState
 
     public override void Update()
     {
+        player.SetVelocity(xInput * player.moveSpeed, rb.velocity.y); //Define a velocidade do jogador com base no X e na velocidade Y
         base.Update();
 
-        player.SetVelocity(xInput * player.moveSpeed, rb.velocity.y); //Define a velocidade do jogador com base no X e na velocidade Y
 
         if (xInput == 0 || player.isWallDetected()) //Se a entrada for zero ou se o jogador estiver a colidir com a parede muda para o IdleState
             stateMachine.ChangeState(player.idleState);
