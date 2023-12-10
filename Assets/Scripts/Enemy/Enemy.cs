@@ -16,6 +16,7 @@ public class Enemy : Entity
     public float moveSpeed; //velocidade de movimento
     public float idleTime; //tempo parado
     public float battleTime; //tempo em batalha
+    private float defaultMoveSpeed;
 
     [Header("Attack Info")]
     public float attackDist;
@@ -30,6 +31,8 @@ public class Enemy : Entity
         base.Awake();
 
         stateMachine = new EnemyStateMachine();
+
+        defaultMoveSpeed = moveSpeed;
     }
 
     protected override void Start()
@@ -45,6 +48,29 @@ public class Enemy : Entity
 
     }
 
+    public virtual void FreezeTime(bool _timeFrozen) //metodo para desacelarar/congelar o inimigo. No caso, a velocidade de movimento e animação estao como 0 para simular a desacelaraçao.
+    {
+        if(_timeFrozen)
+        {
+            moveSpeed = 0f;
+            anim.speed = 0f;
+        }
+        else
+        {
+            moveSpeed = defaultMoveSpeed; 
+            anim.speed = 1f;
+        }
+    }
+
+    protected virtual IEnumerator FreezeTimeFor(float _seconds)
+    {
+        FreezeTime(true);
+        yield return new WaitForSeconds(_seconds);
+
+        FreezeTime(false);
+    }
+
+    #region CounterAttackWindow
     public virtual void OpenCounterAttackWindow()
     {
         canBeStunned = true;
@@ -67,6 +93,7 @@ public class Enemy : Entity
 
         return false;
     }
+    #endregion
 
     public virtual void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
 

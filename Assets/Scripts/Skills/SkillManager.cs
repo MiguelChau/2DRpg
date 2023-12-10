@@ -12,6 +12,8 @@ public class SkillManager : MonoBehaviour
 
     public Sword_Skill sword { get; private set; }  // ref habilidade de atirar sword
 
+    public Blackhole_Skill blackhole { get; private set; } //ref habilidade de blackhole
+
     private void Awake() //este awake grante que apenas exista uma instancia de skillmanager no jogo
     {
         if(instance != null)
@@ -25,5 +27,6 @@ public class SkillManager : MonoBehaviour
         dash = GetComponent<Dash_Skill>();
         clone = GetComponent<Clone_Skill>();
         sword = GetComponent<Sword_Skill>();
+        blackhole = GetComponent<Blackhole_Skill>();
     }
 }

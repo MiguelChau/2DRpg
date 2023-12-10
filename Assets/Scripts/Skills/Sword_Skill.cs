@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum SwordType
@@ -12,14 +13,27 @@ public class Sword_Skill : Skill
     public SwordType swordType = SwordType.REGULAR;
 
     [Header("Bounce Info")]
-    [SerializeField] private int amountOfBounce;
+    [SerializeField] private int bounceAmount;
     [SerializeField] private float bounceGravity;
+    [SerializeField] private float bounceSpeed;
+
+    [Header("Piece Info")]
+    [SerializeField] private int pierceAmount;
+    [SerializeField] private float pierceGravity;
+
+    [Header("Spin Info")]
+    [SerializeField] private float maxTravelDis = 7;
+    [SerializeField] private float spinDur = 2;
+    [SerializeField] private float spinGravity = 1;
+    [SerializeField] private float hitCooldown = .35f;
 
 
     [Header("Skill Info")]
     [SerializeField] private GameObject swordPrefab;
     [SerializeField] private Vector2 launchForce;
     [SerializeField] private float swordGravity;
+    [SerializeField] private float freezeTimerDur;
+    [SerializeField] private float returnSpeed;
 
 
     private Vector2 finalDir;
@@ -37,6 +51,23 @@ public class Sword_Skill : Skill
         base.Start();
 
         GenerateDots();
+
+        SetupGravity();
+        
+    }
+
+    private float SetupGravity()
+    {
+        float swordGravity = 0;
+
+        if (swordType == SwordType.BOUNCE)
+            swordGravity = bounceGravity;
+        else if(swordType == SwordType.PIERCE)
+            swordGravity = pierceGravity;
+        else if(swordType == SwordType.SPIN)
+            swordGravity = spinGravity;
+
+        return swordGravity;
     }
 
     protected override void Update()
@@ -57,13 +88,16 @@ public class Sword_Skill : Skill
         GameObject newSword = Instantiate(swordPrefab, player.transform.position, transform.rotation);
         SwordSkillController newSwordScript = newSword.GetComponent<SwordSkillController>();
 
-        if(swordType == SwordType.BOUNCE)
-        {
-            swordGravity = bounceGravity;
-            newSwordScript.SetupBounce(true, amountOfBounce);
-        }
+        if (swordType == SwordType.BOUNCE)
+            newSwordScript.SetupBounce(true, bounceAmount, bounceSpeed);
+        else if (swordType == SwordType.PIERCE)
+            newSwordScript.SetupPierce(pierceAmount);
+        else if (swordType == SwordType.SPIN)
+            newSwordScript.SetupSpin(true, maxTravelDis, spinDur, hitCooldown);
 
-        newSwordScript.SetupSword(finalDir, swordGravity, player);
+
+        float swordGravity = SetupGravity();
+        newSwordScript.SetupSword(finalDir, swordGravity, player, freezeTimerDur, returnSpeed);
 
         player.AssignNewSword(newSword);
 
