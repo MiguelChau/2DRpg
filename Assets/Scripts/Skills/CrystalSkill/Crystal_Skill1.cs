@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
+//Este script cria as habilidades dos cristais com diferentes comportamentos.
 public class Crystal_Skill1 : Skill
 {
-    [SerializeField] private float crystalDuration;
+    [SerializeField] private float crystalDuration; //duração do cristal
     [SerializeField] private GameObject crystalPrefab;
-    private GameObject currentCrystal;
+    private GameObject currentCrystal; //referencia para o atual crystal
 
     [Header("Crystal mirage")]
-    [SerializeField] private bool cloneInsteadOfCrystal;
+    [SerializeField] private bool cloneInsteadOfCrystal; //referencia para alterar o clone para cristal
 
     [Header("Explosive crystal")]
-    [SerializeField] private bool canExplode;
+    [SerializeField] private bool canExplode; //explosao do cristal
 
 
     [Header("Moving crystal")]
@@ -30,7 +32,7 @@ public class Crystal_Skill1 : Skill
     {
         base.UseSkill();
 
-        if (CanUseMultiCrystal())
+        if (CanUseMultiCrystal()) //verifica se é possivel usar varios cristais
             return;
 
         if (currentCrystal == null)
@@ -38,16 +40,17 @@ public class Crystal_Skill1 : Skill
             CreateCrystal();
 
         }
-        else
+        else //cria um novo cristal se nao houver um atual ou relaiza troca de posiçao ou criação de clone conforme especificado
         {
             if (canMoveToEnemy)
                 return;
 
             Vector2 playerPos = player.transform.position;
             player.transform.position = currentCrystal.transform.position;
-            currentCrystal.transform.position = playerPos;
+            currentCrystal.transform.position = playerPos; //troca da posiçao do jogador com a posiçao do cristal atual
 
-            if (cloneInsteadOfCrystal)
+            if (cloneInsteadOfCrystal) //verifica se a opçao é criar um clone em vez de um cristal. Se for verdadeiro, cria um clone e destroi o cristal atual.
+                //se for falso, finaliza o cristal atual chamando o finishcrystal.
             {
                 SkillManager.instance.clone.CreateClone(currentCrystal.transform, Vector3.zero);
                 Destroy(currentCrystal);
@@ -59,7 +62,7 @@ public class Crystal_Skill1 : Skill
         }
     }
 
-    public void CreateCrystal()
+    public void CreateCrystal() //instancia um novo cristal, configurando o seu comportamento com base nas variaveis
     {
         currentCrystal = Instantiate(crystalPrefab, player.transform.position, Quaternion.identity);
         Crystal_Skill_Controller currentCystalScript = currentCrystal.GetComponent<Crystal_Skill_Controller>();
@@ -67,8 +70,10 @@ public class Crystal_Skill1 : Skill
         currentCystalScript.SetupCrystal(crystalDuration, canExplode, canMoveToEnemy, moveSpeed, FindClosestEnemy(currentCrystal.transform));
     }
 
-    public void CurrentCrystalChooseRandomTarget() => currentCrystal.GetComponent<Crystal_Skill_Controller>().ChooseRandomEnemy();
-    private bool CanUseMultiCrystal()
+    //metodo para escolher random um inimigo para o cristal atuar
+    public void CurrentCrystalChooseRandomTarget() => currentCrystal.GetComponent<Crystal_Skill_Controller>().ChooseRandomEnemy(); 
+
+    private bool CanUseMultiCrystal() //responsavel por verificar se é possivel usar multiplos cristais
     {
         if (canUseMultiStacks)
         {
@@ -86,7 +91,7 @@ public class Crystal_Skill1 : Skill
                 newCrystal.GetComponent<Crystal_Skill_Controller>().
                     SetupCrystal(crystalDuration, canExplode, canMoveToEnemy, moveSpeed, FindClosestEnemy(newCrystal.transform));
 
-                if (crystalLeft.Count <= 0)
+                if (crystalLeft.Count <= 0) //ffaz refil da lista de cristais quando preciso
                 {
                     cooldown = multiStackCooldown;
                     RefilCrystal();

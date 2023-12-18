@@ -25,6 +25,7 @@ public class Enemy : Entity
 
 
     public EnemyStateMachine stateMachine { get; private set; }
+    public string lastAnimBoolName {  get; private set; } //para parar a animaçao
 
     protected override void Awake()
     {
@@ -46,6 +47,11 @@ public class Enemy : Entity
 
         stateMachine.currentState.Update();
 
+    }
+
+    public virtual void AssignLastAnimName(string _animBoolName)
+    {
+        lastAnimBoolName = _animBoolName;
     }
 
     public virtual void FreezeTime(bool _timeFrozen) //metodo para desacelarar/congelar o inimigo. No caso, a velocidade de movimento e animação estao como 0 para simular a desacelaraçao.

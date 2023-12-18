@@ -39,6 +39,7 @@ public class Player : Entity
     public PlayerAimSwordState aimSwordState { get; private set; }
     public PlayerCatchSwordState catchSwordState { get; private set; }
     public PlayerBlackHoleState blackHoleState { get; private set; }
+    public PlayerDeadState deadState { get; private set; }
     #endregion
 
     protected override void Awake()
@@ -54,6 +55,7 @@ public class Player : Entity
         wallSlideState = new PlayerWallSlideState(this, stateMachine, "WallSlide");
         dashState = new PlayerDashState(this, stateMachine, "Dash");
         wallJumpState = new PlayerJumpWallState(this, stateMachine, "Jump");
+        deadState = new PlayerDeadState(this, stateMachine, "Die");
 
         primaryAttackState = new PrimaryAttackState(this, stateMachine, "Attack");
         counterAttackState = new PlayerCounterAttackState(this, stateMachine, "CounterAttack");
@@ -84,7 +86,10 @@ public class Player : Entity
         CheckDashInput();
 
         if (Input.GetKeyDown(KeyCode.F))
+        {
             skill.crystal.CanUseSkill();
+
+        }
     }
 
     public void AssignNewSword(GameObject _newSword)
@@ -124,6 +129,13 @@ public class Player : Entity
 
             stateMachine.ChangeState(dashState);
         }
+    }
+
+    public override void Die()
+    {
+        base.Die();
+
+        stateMachine.ChangeState(deadState);
     }
 
 
