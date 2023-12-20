@@ -363,6 +363,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fxDuration: 1
   hitMat: {fileID: 2100000, guid: 3ebf729b13a487b45840c6c8ad7dae3e, type: 2}
+  frozenColor: []
+  burnedColor: []
+  shockColor: []
 --- !u!114 &1632063095753704561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -420,6 +423,8 @@ MonoBehaviour:
   isIgnited: 0
   isFrozen: 0
   isShocked: 0
+  ailmentsDur: 4
+  shockStrikePrefab: {fileID: 5780223339783166564, guid: fc60f31bb904ac64784f87207f1cbe50, type: 3}
   _currentHealth: 0
 --- !u!1 &4835021821478268690
 GameObject:

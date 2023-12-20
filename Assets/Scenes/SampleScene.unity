@@ -382,7 +382,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -25.22, y: 3.3899999, z: -10}
+  m_LocalPosition: {x: -27.69, y: 3.3899999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -487,7 +487,7 @@ Transform:
   m_GameObject: {fileID: 642917853}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -25.22, y: 3.3899999, z: -10}
+  m_LocalPosition: {x: -27.69, y: 3.3899999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4930,7 +4930,7 @@ MonoBehaviour:
   createCloneOnCounterAttack: 1
   chanceToDuplicate: 0
   duplicateClone: 1
-  crystalInsteadOfClone: 0
+  crystalInsteadOfClone: 1
 --- !u!114 &1535786788
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4999,10 +4999,10 @@ MonoBehaviour:
   crystalDuration: 1.5
   crystalPrefab: {fileID: 3742310376413918406, guid: fd94706cbef48aa4a8b1c72d3ca89113, type: 3}
   cloneInsteadOfCrystal: 0
-  canExplode: 0
-  canMoveToEnemy: 0
+  canExplode: 1
+  canMoveToEnemy: 1
   moveSpeed: 4
-  canUseMultiStacks: 0
+  canUseMultiStacks: 1
   amountOfStacks: 3
   multiStackCooldown: 4
   useTimeWondow: 2.5
@@ -5380,7 +5380,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 75068299846903961, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -25.22
+      value: -27.69
       objectReference: {fileID: 0}
     - target: {fileID: 75068299846903961, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5559,12 +5559,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1632063095753704561, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
+      propertyPath: damage.baseValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1632063095753704561, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
+      propertyPath: shockStrikePrefab
+      value: 
+      objectReference: {fileID: 5780223339783166564, guid: fc60f31bb904ac64784f87207f1cbe50, type: 3}
+    - target: {fileID: 1632063095753704561, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
       propertyPath: critPower.baseValue
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1632063095753704561, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
       propertyPath: iceDamage.baseValue
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1632063095753704561, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
       propertyPath: maxHealth.baseValue
@@ -5576,15 +5584,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1632063095753704561, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
       propertyPath: fireDamage.baseValue
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 1632063095753704561, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
       propertyPath: lightningDamage.baseValue
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1632063095753704561, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
       propertyPath: magicResistance.baseValue
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3592868592999439239, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
+      propertyPath: jumpForce
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 4108205406401425184, guid: c3712b412d621ea43bf89889d63387b2, type: 3}
       propertyPath: m_Name
@@ -5825,7 +5837,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7773337092030277718, guid: e030bf32afb5ed844bb774b5f3ba8697, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -29.18
+      value: -15.4
       objectReference: {fileID: 0}
     - target: {fileID: 7773337092030277718, guid: e030bf32afb5ed844bb774b5f3ba8697, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5891,6 +5903,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.9622642
       objectReference: {fileID: 0}
+    - target: {fileID: 8930058919613716936, guid: e030bf32afb5ed844bb774b5f3ba8697, type: 3}
+      propertyPath: shockStrikePrefab
+      value: 
+      objectReference: {fileID: 5780223339783166564, guid: fc60f31bb904ac64784f87207f1cbe50, type: 3}
     - target: {fileID: 8930058919613716936, guid: e030bf32afb5ed844bb774b5f3ba8697, type: 3}
       propertyPath: iceDamage.baseValue
       value: 0

@@ -49,11 +49,22 @@ public class Enemy : Entity
 
     }
 
-    public virtual void AssignLastAnimName(string _animBoolName)
+    public virtual void AssignLastAnimName(string _animBoolName) => lastAnimBoolName = _animBoolName;
+
+    public override void SlowEntity(float _slowPercent, float _slowDur)
     {
-        lastAnimBoolName = _animBoolName;
+        moveSpeed = moveSpeed * (1 - _slowPercent);
+        anim.speed = anim.speed * (1 - _slowPercent);
+
+        Invoke("ReturnDefaultSpeed", _slowDur);
     }
 
+    public override void ReturnDefaultSpeed()
+    {
+        base.ReturnDefaultSpeed();
+
+        moveSpeed = defaultMoveSpeed;
+    }
     public virtual void FreezeTime(bool _timeFrozen) //metodo para desacelarar/congelar o inimigo. No caso, a velocidade de movimento e animação estao como 0 para simular a desacelaraçao.
     {
         if(_timeFrozen)

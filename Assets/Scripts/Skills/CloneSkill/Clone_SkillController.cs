@@ -5,6 +5,7 @@ using UnityEngine;
 //Controla o comportamento de um clone criado pela habilidade do clone skill cs
 public class Clone_SkillController : MonoBehaviour
 {
+    private Player player;
     private SpriteRenderer sprite; //manipula a aparencia 
     private Animator anim; //animaçao do clone
     [SerializeField] private float colorLoosing;
@@ -38,12 +39,12 @@ public class Clone_SkillController : MonoBehaviour
                 Destroy(gameObject);
         }
     }
-    public void SetupClone(Transform _newTransform, float _cloneDur, bool _canAttack, Vector3 _offset, Transform _closestEnemy, bool _duplicate, float _chanceToDuplicate) //configura a posiçao do clone
+    public void SetupClone(Transform _newTransform, float _cloneDur, bool _canAttack, Vector3 _offset, Transform _closestEnemy, bool _duplicate, float _chanceToDuplicate, Player _player) //configura a posiçao do clone
     {
         if (_canAttack)
             anim.SetInteger("AttackNumber", Random.Range(1, 3));
         
-
+        player = _player;
         transform.position = _newTransform.position + _offset;
         cloneTimer = _cloneDur;
 
@@ -66,7 +67,7 @@ public class Clone_SkillController : MonoBehaviour
         {
             if (hit.GetComponent<Enemy>() != null)
             {
-                hit.GetComponent<Enemy>().DamageEffect();
+                player.stats.DoDamage(hit.GetComponent<CharacterStats>());
 
                 if(duplicateClone)
                 {

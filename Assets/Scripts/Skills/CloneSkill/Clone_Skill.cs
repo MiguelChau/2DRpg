@@ -33,7 +33,7 @@ public class Clone_Skill : Skill
         GameObject newClone = Instantiate(clonePrefab); //instancia um novo clone a partir do prefab
 
         newClone.GetComponent<Clone_SkillController>(). //obtem o componente do controller e chama o seu metodo de setup para configurar o comportamento
-            SetupClone(_clonePosition, cloneDur, canAttack, _offset, FindClosestEnemy(newClone.transform), duplicateClone, chanceToDuplicate);
+            SetupClone(_clonePosition, cloneDur, canAttack, _offset, FindClosestEnemy(newClone.transform), duplicateClone, chanceToDuplicate, player);
     }
 
     public void CreateCloneOnDashStart()
