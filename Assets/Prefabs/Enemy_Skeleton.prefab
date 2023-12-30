@@ -102,7 +102,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1760760683
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: -10
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.8207547, g: 0, b: 0.015291465, a: 0.6117647}
@@ -498,7 +498,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1760760683
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -85727878, guid: 687df074731fbf744b668d2275dbb675, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -700,6 +700,7 @@ GameObject:
   - component: {fileID: 7641151907857135514}
   - component: {fileID: 8930058919613716936}
   - component: {fileID: 2471766508710394623}
+  - component: {fileID: -4792094809542306507}
   m_Layer: 7
   m_Name: Enemy_Skeleton
   m_TagString: Untagged
@@ -804,6 +805,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fxDuration: 1
   hitMat: {fileID: 2100000, guid: 3ebf729b13a487b45840c6c8ad7dae3e, type: 2}
+  frozenColor: []
+  burnedColor: []
+  shockColor: []
 --- !u!114 &8930058919613716936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -861,7 +865,11 @@ MonoBehaviour:
   isIgnited: 0
   isFrozen: 0
   isShocked: 0
+  ailmentsDur: 4
+  shockStrikePrefab: {fileID: 0}
   _currentHealth: 0
+  level: 0
+  percentModifier: 0
 --- !u!70 &2471766508710394623
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -897,3 +905,23 @@ CapsuleCollider2D:
   m_Offset: {x: 0.004331044, y: -0.2533962}
   m_Size: {x: 0.6732641, y: 1.5067946}
   m_Direction: 0
+--- !u!114 &-4792094809542306507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8443079143590936927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d748f3b10fcf7049b055e1817676c4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleItemDrop: 3
+  possibleDrop:
+  - {fileID: 11400000, guid: 6532e9d4698930547922e0cb2a6d815e, type: 2}
+  - {fileID: 11400000, guid: 96eebb4a3ac1cf44d8ba432150d0aab7, type: 2}
+  - {fileID: 11400000, guid: c2f4c68cbb988444eb20b7b6228b6ca7, type: 2}
+  - {fileID: 11400000, guid: 850f9c5532a950347a3db1b3ca4613c7, type: 2}
+  - {fileID: 11400000, guid: d8a49363319b5094e888d059a5f5fe27, type: 2}
+  dropPrefab: {fileID: 1130203343237435287, guid: 902ca0e72cfb8534db723f40303c8eed, type: 3}

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
@@ -45,7 +46,7 @@ public class CharacterStats : MonoBehaviour
     public int _currentHealth;
 
     public System.Action onHealthChange;
-    protected bool isDead;
+    public bool isDead {  get; private set; }
 
 
     protected virtual void Start()
@@ -54,9 +55,6 @@ public class CharacterStats : MonoBehaviour
         _currentHealth = GetMaxHealthValue();
 
         fx = GetComponent<EntityFX>();
-
-        //example
-        //damage.AddModifier(5);
     }
 
     protected virtual void Update()
@@ -80,6 +78,20 @@ public class CharacterStats : MonoBehaviour
             ApplyIgniteAilment();
     }
 
+    public virtual void IncreaseStatBy(int _modifier, float _duration, Stat _statToModify) //especie de flask wow ou phial 
+    {
+        StartCoroutine(StartModifierCoroutine(_modifier, _duration, _statToModify));
+    }
+
+    private IEnumerator StartModifierCoroutine(int _modifier, float _duration, Stat _statToModify)
+    {
+        _statToModify.AddModifier(_modifier);
+
+        yield return new WaitForSeconds(_duration);
+
+        _statToModify.RemoveModifier(_modifier);
+    }
+
     public virtual void DoDamage(CharacterStats _targetStats)
     {
         if (AvoidAttacks(_targetStats))
@@ -96,7 +108,7 @@ public class CharacterStats : MonoBehaviour
         totalDamage = ArmorMethod(_targetStats, totalDamage);
         _targetStats.TakeDamage(totalDamage);
 
-        //DoMagicDamage(_targetStats);
+        DoMagicDamage(_targetStats);
     }
 
     #region Magical Damage and Elements
@@ -133,6 +145,7 @@ public class CharacterStats : MonoBehaviour
             {
                 canApplyIgnite = true;
                 _targetStats.ApplyElements(canApplyIgnite, canApplyFrozen, canApplyShock);
+
                 return;
             }
 
@@ -140,6 +153,7 @@ public class CharacterStats : MonoBehaviour
             {
                 canApplyFrozen = true;
                 _targetStats.ApplyElements(canApplyIgnite, canApplyFrozen, canApplyShock);
+
                 return;
             }
 
@@ -147,6 +161,7 @@ public class CharacterStats : MonoBehaviour
             {
                 canApplyShock = true;
                 _targetStats.ApplyElements(canApplyIgnite, canApplyFrozen, canApplyShock);
+
                 return;
             }
 
@@ -171,14 +186,14 @@ public class CharacterStats : MonoBehaviour
         if (_ignite && canApplyIgnite)
         {
             isIgnited = _ignite;
-            ignitedTimer = 2;
+            ignitedTimer = ailmentsDur;
 
             fx.InvokeIgniteFx(ailmentsDur);
         }
 
         if (_frozen && canApplyFrozen)
         {
-            frozenTimer = 2;
+            frozenTimer = ailmentsDur;
             isFrozen = _frozen;
 
             float _slowPercent = .2f;
@@ -198,6 +213,7 @@ public class CharacterStats : MonoBehaviour
             {
                 if (GetComponent<Player>() != null)
                     return;
+
                 HitShockClosest();
             }
 
@@ -225,7 +241,7 @@ public class CharacterStats : MonoBehaviour
         if (isShocked)
             return;
 
-        shockedTimer = 2;
+        shockedTimer = ailmentsDur;
         isShocked = _shock;
 
         fx.InvokeShockFx(ailmentsDur);
@@ -278,6 +294,17 @@ public class CharacterStats : MonoBehaviour
             Die();
     }
 
+    public virtual void IncreaseHealthBy(int _amount) //usado tanto para aas healthpots como para o lifesteal da weapon
+    {
+        _currentHealth += _amount;
+
+        if(_currentHealth > GetMaxHealthValue())
+            _currentHealth = GetMaxHealthValue();
+
+        if(onHealthChange != null)
+            onHealthChange();
+    }
+
     protected virtual void DecreaseHealthBy(int _damage)
     {
         _currentHealth -= _damage;
@@ -319,9 +346,7 @@ public class CharacterStats : MonoBehaviour
 
         if (Random.Range(0, 100) < totalEvasion)
         {
-            Debug.Log("Attack Avoided");
             return true;
-
         }
 
         return false;

@@ -6,7 +6,7 @@ using UnityEngine;
 public class PrimaryAttackState : PlayerStates
 {
 
-    private int comboCounter; //Controlo de combo de ataques
+    public int comboCounter { get; private set; }             //Controlo de combo de ataques
 
     private float lastTimeAttacked; //Armazena o tempo do ultimo ataque
     private float comboWindow = 2; //Define a janela de tempo para realizar as combos

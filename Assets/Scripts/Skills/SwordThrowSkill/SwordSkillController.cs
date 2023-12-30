@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class SwordSkillController : MonoBehaviour
@@ -23,7 +23,7 @@ public class SwordSkillController : MonoBehaviour
     private int amountOfBounce;
     private List<Transform> enemyTarget;
     private int targetIndex;
-    
+
     [Header("Pierce Info")]
     private float pierceAmount;
 
@@ -62,7 +62,7 @@ public class SwordSkillController : MonoBehaviour
         returnSpeed = _returnSpeed; //velocidade de retorno da espada
         freezeTimeDur = _freezeTimeDur;
 
-        if(pierceAmount <= 0)
+        if (pierceAmount <= 0)
             anim.SetBool("Rotation", true);
 
 
@@ -97,7 +97,7 @@ public class SwordSkillController : MonoBehaviour
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
         //rb.isKinematic = false;
         transform.parent = null;
-        isReturning = true; 
+        isReturning = true;
 
     }
 
@@ -133,7 +133,7 @@ public class SwordSkillController : MonoBehaviour
             {
                 spinTimer -= Time.deltaTime;
 
-                transform.position = Vector2.MoveTowards(transform.position, new Vector2(transform.position.x + spinDirection, transform.position.y), 1.5f * Time.deltaTime); ;
+               // transform.position = Vector2.MoveTowards(transform.position, new Vector2(transform.position.x + 1, transform.position.y), 2.4f * Time.deltaTime); ;
 
                 if (spinTimer < 0)
                 {
@@ -196,7 +196,7 @@ public class SwordSkillController : MonoBehaviour
         if (isReturning)
             return;
 
-        if(collision.GetComponent<Enemy>() != null)
+        if (collision.GetComponent<Enemy>() != null)
         {
             Enemy enemy = collision.GetComponent<Enemy>();
 
@@ -211,7 +211,12 @@ public class SwordSkillController : MonoBehaviour
     private void SwordSkillDamage(Enemy enemy)
     {
         player.stats.DoDamage(enemy.GetComponent<CharacterStats>());
-        enemy.StartCoroutine("FreezeTimeFor", freezeTimeDur);
+        enemy.FreezeTimeFor(freezeTimeDur);
+
+        ItemDataEquipement equipNecklace = Inventory.Instance.GetEquipment(EquipementType.Necklace); //serve para que o efeito pretendido no necklace faça efeito
+
+        if (equipNecklace != null)
+            equipNecklace.Effect(enemy.transform);
     }
 
     private void TargetsBounce(Collider2D collision)

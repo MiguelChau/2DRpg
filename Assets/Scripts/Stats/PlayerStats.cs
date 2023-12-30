@@ -21,7 +21,18 @@ public class PlayerStats : CharacterStats
     {
         base.Die();
         player.Die();
-        Debug.Log("Player has died.");
 
+        GetComponent<PlayerItemDrop>()?.GenerateDrop();
+
+    }
+
+    protected override void DecreaseHealthBy(int _damage)
+    {
+        base.DecreaseHealthBy(_damage);
+
+        ItemDataEquipement currentArmor = Inventory.Instance.GetEquipment(EquipementType.Armor);
+
+        if(currentArmor != null)
+            currentArmor.Effect(player.transform);
     }
 }

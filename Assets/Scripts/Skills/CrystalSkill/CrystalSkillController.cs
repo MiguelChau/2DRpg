@@ -56,6 +56,9 @@ public class Crystal_Skill_Controller : MonoBehaviour
 
         if (canMove)
         {
+            if (closestTarget == null)
+                return;
+
             transform.position = Vector2.MoveTowards(transform.position, closestTarget.position, moveSpeed * Time.deltaTime);
 
             if (Vector2.Distance(transform.position, closestTarget.position) < 1)
@@ -77,6 +80,11 @@ public class Crystal_Skill_Controller : MonoBehaviour
         {
             if (hit.GetComponent<Enemy>() != null)
                 player.stats.DoMagicDamage(hit.GetComponent<CharacterStats>());
+
+            ItemDataEquipement equipNecklace = Inventory.Instance.GetEquipment(EquipementType.Necklace); //serve para que o efeito pretendido no necklace faça efeito
+
+            if (equipNecklace != null)
+                equipNecklace.Effect(hit.transform);
         }
     }
 

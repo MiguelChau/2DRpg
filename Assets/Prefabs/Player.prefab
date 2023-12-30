@@ -226,6 +226,7 @@ GameObject:
   - component: {fileID: 2730478298270634771}
   - component: {fileID: 1033671224772765974}
   - component: {fileID: 1632063095753704561}
+  - component: {fileID: 5640003589883191535}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -426,6 +427,22 @@ MonoBehaviour:
   ailmentsDur: 4
   shockStrikePrefab: {fileID: 5780223339783166564, guid: fc60f31bb904ac64784f87207f1cbe50, type: 3}
   _currentHealth: 0
+--- !u!114 &5640003589883191535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4108205406401425184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3959f02774e5ebc4aa3fd2a4b27a7579, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleItemDrop: 0
+  possibleDrop: []
+  dropPrefab: {fileID: 1130203343237435287, guid: 902ca0e72cfb8534db723f40303c8eed, type: 3}
+  chanceToLooseItems: 99
 --- !u!1 &4835021821478268690
 GameObject:
   m_ObjectHideFlags: 0
@@ -739,7 +756,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1387870081
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: -3318188226485093758, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
