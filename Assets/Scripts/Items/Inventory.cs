@@ -22,10 +22,12 @@ public class Inventory : MonoBehaviour
     [SerializeField] private Transform inventorySlotParent;
     [SerializeField] private Transform stashSlotParent;
     [SerializeField] private Transform equipmentSlotParent;
+    [SerializeField] private Transform statSlotParent;
 
     private UI_ItemSlot[] inventoryItemSlot;
     private UI_ItemSlot[] stashItemSlot;
     private UI_EquipmentSlot[] equipmentSlot;
+    private UI_StatSlot[] statSlot;
 
     [Header("Items Cooldown")]
     private float lastTimeUsedFlask;
@@ -55,6 +57,7 @@ public class Inventory : MonoBehaviour
         inventoryItemSlot = inventorySlotParent.GetComponentsInChildren<UI_ItemSlot>();
         stashItemSlot = stashSlotParent.GetComponentsInChildren<UI_ItemSlot>();
         equipmentSlot = equipmentSlotParent.GetComponentsInChildren<UI_EquipmentSlot>();
+        statSlot = statSlotParent.GetComponentsInChildren<UI_StatSlot>();
         AddStartingItems();
 
     }
@@ -138,11 +141,16 @@ public class Inventory : MonoBehaviour
         {
             stashItemSlot[i].UpdateSlot(stash[i]);
         }
+
+        for(int i = 0; i < statSlot.Length; i++) //update info of stats of the char
+        {
+            statSlot[i].UpdateStatValueUI();
+        }
     }
 
     public void AddItem(ItemData _item)
     {
-        if (_item.itemType == ItemType.Equipement)
+        if (_item.itemType == ItemType.Equipement && CanAddItem())
         {
             AddToInventory(_item);
         }
@@ -206,6 +214,16 @@ public class Inventory : MonoBehaviour
         }
 
         UpdateUISlot();
+    }
+
+    public bool CanAddItem()
+    {
+        if(inventory.Count >= inventoryItemSlot.Length)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public bool CanCraft(ItemDataEquipement _itemToCraft, List<InventoryItem> _requiredMaterials)
