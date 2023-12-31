@@ -27,7 +27,7 @@ public class CharacterStats : MonoBehaviour
     public Stat strength; //1 point increace damage by 1 and crit power by 1%
     public Stat agility; //1 point increase evasion by 1% nd crit chance by 1%
     public Stat intelligence; //1 point increas magic damage by 1 and magic resis by 3
-    public Stat vitality; //1 point increase health by 3 or 5 points
+    public Stat vitality; //1 point increase health by  5 points
     [Space]
     [Header("Offensive Stats")]
     public Stat damage;
@@ -35,7 +35,7 @@ public class CharacterStats : MonoBehaviour
     public Stat critPower; //default value 150%
     [Space]
     [Header("Defensive Sats")]
-    public Stat maxHealth;
+    public Stat health;
     public Stat armor;
     public Stat evasion;
     public Stat magicResistance;
@@ -392,7 +392,7 @@ public class CharacterStats : MonoBehaviour
 
     public int GetMaxHealthValue()
     {
-        return maxHealth.GetValue() + vitality.GetValue() * 5;
+        return health.GetValue() + vitality.GetValue() * 5;
     }
     #endregion
 
@@ -413,7 +413,7 @@ public class CharacterStats : MonoBehaviour
         else if (_statType == StatType.CritPower)
             return critPower;
         else if (_statType == StatType.Health)
-            return maxHealth;
+            return health;
         else if (_statType == StatType.Armor)
             return armor;
         else if (_statType == StatType.Evasion)
