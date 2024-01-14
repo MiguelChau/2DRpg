@@ -112,9 +112,9 @@ public class BlackholeSkillController : MonoBehaviour
             float xOffSet;
 
             if (Random.Range(0, 100) > 50)
-                xOffSet = 2;
+                xOffSet = 1;
             else
-                xOffSet = -2;
+                xOffSet = -1;
 
             if(SkillManager.instance.clone.crystalInsteadOfClone)
             {

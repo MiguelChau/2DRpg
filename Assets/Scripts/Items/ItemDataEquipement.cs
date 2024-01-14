@@ -14,6 +14,7 @@ public class ItemDataEquipement : ItemData
 {
     public EquipementType equipementType;
 
+    [Header("Unique Effect")]
     public float itemCooldown;
     public ItemEffect[] itemEffects;
 
@@ -122,9 +123,19 @@ public class ItemDataEquipement : ItemData
         AddItemDescription(iceDamage, "Ice Damage");
         AddItemDescription(lightningDamage, "Thunder Damage");
 
-        if(descriptionLength < 5 )
+        for(int i  = 0; i < itemEffects.Length; i++)
         {
-            for(int i = 0; i < 5 - descriptionLength; ++i) { }
+            if (itemEffects[i].effectDescription.Length > 0)
+            {
+                sb.AppendLine();
+                sb.AppendLine("Unique: " + itemEffects[i].effectDescription);
+                descriptionLength++;
+            }
+        }
+
+        if (descriptionLength < 5)
+        {
+            for (int i = 0; i < 5 - descriptionLength; ++i) { }
             {
                 sb.AppendLine();
                 sb.Append("");

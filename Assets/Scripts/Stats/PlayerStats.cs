@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerStats : CharacterStats
@@ -22,17 +23,49 @@ public class PlayerStats : CharacterStats
         base.Die();
         player.Die();
 
+        GameManager.instance.lostExperienceAmount = PlayerManager.instance.experience;
+        PlayerManager.instance.experience = 0;
+
         GetComponent<PlayerItemDrop>()?.GenerateDrop();
 
     }
 
     protected override void DecreaseHealthBy(int _damage)
     {
+        // Sobrescreve o método da classe base para adicionar comportamentos adicionais quando a saúde do jogador é reduzida.
+        //Obtém o equipamento atual do tipo Armor do inventário e aplica seu efeito no jogador.
         base.DecreaseHealthBy(_damage);
 
         ItemDataEquipement currentArmor = Inventory.Instance.GetEquipment(EquipementType.Armor);
 
         if(currentArmor != null)
             currentArmor.Effect(player.transform);
+    }
+
+    public override void OnEvasion()
+    {
+        player.skill.dodge.CreateMirageOnDodge();
+    }
+
+    public void CloneDoDamage(CharacterStats _targetStats, float _multiplier)
+    {
+        if (AvoidAttacks(_targetStats)) //verifica se o ataque foi evitado
+            return;
+
+        int totalDamage = damage.GetValue() + strength.GetValue(); //calcula o dano total 
+
+        if (_multiplier > 0)
+            totalDamage = Mathf.RoundToInt(totalDamage * _multiplier);
+
+        if (CriticalChance()) //verifica se ocorreu um critical strike
+        {
+            totalDamage = CalculeCriticalDamage(totalDamage);
+        }
+
+
+        totalDamage = ArmorMethod(_targetStats, totalDamage);
+        _targetStats.TakeDamage(totalDamage);
+
+        DoMagicDamage(_targetStats);
     }
 }

@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cc23ba6248930c4cb085ba648f242df, type: 3}
   m_Name: LifeSteal
   m_EditorClassIdentifier: 
+  effectDescription: Heals 10% of your health per hit.
   healPercent: 0.1

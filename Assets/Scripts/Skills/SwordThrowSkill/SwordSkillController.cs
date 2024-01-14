@@ -14,8 +14,9 @@ public class SwordSkillController : MonoBehaviour
     private bool canRotate = true; //para rotaçao da espada
     private bool isReturning; //indicaçao de retorno da espada
 
-    private float returnSpeed = 12; //velocidade do retorno da espada
     private float freezeTimeDur; //duraçao do congelemanto ao atingir com a sword skill
+    private float returnSpeed = 12; //velocidade do retorno da espada
+    private float vulnerableTimeDur;
 
     [Header("Bounce Info")]
     private float bounceSpeed;
@@ -37,8 +38,6 @@ public class SwordSkillController : MonoBehaviour
     private float hitTimer;
     private float hitCooldown;
 
-    private float spinDirection;
-
 
     private void Awake() //obtem as referencias da espada
     {
@@ -56,17 +55,17 @@ public class SwordSkillController : MonoBehaviour
     {
         //Parametros
         player = _player; //referencia do jogador
+        freezeTimeDur = _freezeTimeDur;
+        returnSpeed = _returnSpeed; //velocidade de retorno da espada
 
         rb.velocity = _dir; //direçao inicial da espada
         rb.gravityScale = _gravityScale; //escala de gravidade para a espada
-        returnSpeed = _returnSpeed; //velocidade de retorno da espada
-        freezeTimeDur = _freezeTimeDur;
 
         if (pierceAmount <= 0)
             anim.SetBool("Rotation", true);
 
 
-        spinDirection = Mathf.Clamp(rb.velocity.x, -1, 1);
+        //spinDirection = Mathf.Clamp(rb.velocity.x, -1, 1);
 
         Invoke("DestroySword", 10); //inicia contagem para destruir a espada
     }
@@ -99,6 +98,8 @@ public class SwordSkillController : MonoBehaviour
         transform.parent = null;
         isReturning = true;
 
+
+        //sword.skill.setcooldown; -> para criar um CD na espada
     }
 
     private void Update()
@@ -210,8 +211,17 @@ public class SwordSkillController : MonoBehaviour
 
     private void SwordSkillDamage(Enemy enemy)
     {
-        player.stats.DoDamage(enemy.GetComponent<CharacterStats>());
-        enemy.FreezeTimeFor(freezeTimeDur);
+        EnemyStats enemyStats = enemy.GetComponent<EnemyStats>();
+
+        player.stats.DoDamage(enemyStats);
+
+        if(player.skill.sword.timeStopUnlocked)
+            enemy.FreezeTimeFor(freezeTimeDur);
+
+        if (player.skill.sword.vulnerableUnlocked)
+            enemyStats.MakeVulnerable(freezeTimeDur);
+
+
 
         ItemDataEquipement equipNecklace = Inventory.Instance.GetEquipment(EquipementType.Necklace); //serve para que o efeito pretendido no necklace faça efeito
 

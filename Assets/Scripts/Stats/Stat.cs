@@ -5,11 +5,11 @@ using UnityEngine;
 [System.Serializable]
 public class Stat
 {
-    [SerializeField] private int baseValue;
+    [SerializeField] private int baseValue; //Valor base da estatística.
 
-    public List<int> modifiers;
+    public List<int> modifiers; //Lista de modificadores aplicados à estatística.
 
-    public int GetValue()
+    public int GetValue() //Calcula o valor final da estatística somando o valor base aos modificadores.
     {
         int finalValue = baseValue;
 

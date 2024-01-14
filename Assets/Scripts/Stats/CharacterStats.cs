@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public enum StatType
@@ -45,14 +44,17 @@ public class CharacterStats : MonoBehaviour
     public Stat iceDamage;
     public Stat lightningDamage;
     [Space]
+    //Efeitos de status
     public bool isIgnited; //dmg overtime
     public bool isFrozen; //decrease armor
     public bool isShocked; //reduce accuracy by 20%
 
+    //temporizadores para controle dos efeitos
     private float ignitedTimer;
     private float frozenTimer;
     private float shockedTimer;
 
+    //temporiazorees para aplicaçao de dano ao longo do tmepo
     [SerializeField] private float ailmentsDur = 4;
     private float igniteDamageCooldown = .3f;
     private float igniteDamageTimer;
@@ -63,13 +65,14 @@ public class CharacterStats : MonoBehaviour
 
     public int _currentHealth;
 
-    public System.Action onHealthChange;
-    public bool isDead {  get; private set; }
+    public System.Action onHealthChange; //ação que sera acionada sempre que a life mudar
 
+    public bool isDead {  get; private set; }
+    private bool isVulnerable;
 
     protected virtual void Start()
     {
-        critPower.DefaultValues(150);
+        critPower.DefaultValues(150); //valor padrao do poder crit
         _currentHealth = GetMaxHealthValue();
 
         fx = GetComponent<EntityFX>();
@@ -96,7 +99,18 @@ public class CharacterStats : MonoBehaviour
             ApplyIgniteAilment();
     }
 
-    public virtual void IncreaseStatBy(int _modifier, float _duration, Stat _statToModify) //especie de flask wow ou phial 
+    public void MakeVulnerable(float _dur) => StartCoroutine(VulnerableCoroutine(_dur));
+
+    private IEnumerator VulnerableCoroutine(float _dur)
+    {
+        isVulnerable = true;
+
+        yield return new WaitForSeconds(_dur);
+
+        isVulnerable = false;
+    }
+
+    public virtual void IncreaseStatBy(int _modifier, float _duration, Stat _statToModify) //especie de flask wow ou phial. Usado para buffs temporarios
     {
         StartCoroutine(StartModifierCoroutine(_modifier, _duration, _statToModify));
     }
@@ -110,14 +124,15 @@ public class CharacterStats : MonoBehaviour
         _statToModify.RemoveModifier(_modifier);
     }
 
-    public virtual void DoDamage(CharacterStats _targetStats)
+    //Responsavel por calcular e aplicar o dano ao alvo. Considera o dano fisico, a crit chance e reduçao do dano com base na armadura do alvo.
+    public virtual void DoDamage(CharacterStats _targetStats) 
     {
-        if (AvoidAttacks(_targetStats))
+        if (AvoidAttacks(_targetStats)) //verifica se o ataque foi evitado
             return;
 
-        int totalDamage = damage.GetValue() + strength.GetValue();
+        int totalDamage = damage.GetValue() + strength.GetValue(); //calcula o dano total 
 
-        if (CriticalChance())
+        if (CriticalChance()) //verifica se ocorreu um critical strike
         {
             totalDamage = CalculeCriticalDamage(totalDamage);
         }
@@ -129,27 +144,29 @@ public class CharacterStats : MonoBehaviour
         DoMagicDamage(_targetStats);
     }
 
-    #region Magical Damage and Elements
-    public virtual void DoMagicDamage(CharacterStats _targetStats)
+    #region Magical Damage and Elements 
+    //lida com o calculo do dano magico e a aplicaçao de efeitos de elementos.
+    public virtual void DoMagicDamage(CharacterStats _targetStats) //calcula o dano magico total e chama o metodo de applyailmentsfuction.
     {
         int _fireDamage = fireDamage.GetValue();
         int _iceDamage = iceDamage.GetValue();
         int _lightDamage = lightningDamage.GetValue();
 
-        int totalMagicDamage = _fireDamage + _iceDamage + _lightDamage + intelligence.GetValue();
+        int totalMagicDamage = _fireDamage + _iceDamage + _lightDamage + intelligence.GetValue(); //calcula o dano total da magia
 
 
-        totalMagicDamage = TargetResistance(_targetStats, totalMagicDamage);
-        _targetStats.TakeDamage(totalMagicDamage);
+        totalMagicDamage = TargetResistance(_targetStats, totalMagicDamage); //aplica resistencia do alvo ao dano magico
+        _targetStats.TakeDamage(totalMagicDamage); //causa dano ao alvo
 
 
-        if (Mathf.Max(_fireDamage, _iceDamage, _lightDamage) <= 0)
+        if (Mathf.Max(_fireDamage, _iceDamage, _lightDamage) <= 0) //Se todos os tipos de dano mágico forem zero, não há necessidade de aplicar efeitos adicionais
             return; //isto serve para que se todos os valores forem 0, durante o while loop para sair desse loop, sem isto a Unity iria freezar e dar overload
 
         ApplyAilmentsFuction(_targetStats, _fireDamage, _iceDamage, _lightDamage);
 
     }
 
+    // Aplica efeitos secundários com base no dano mágico causado
     private void ApplyAilmentsFuction(CharacterStats _targetStats, int _fireDamage, int _iceDamage, int _lightDamage)
     {
         //o maior dmg do element (value), é o vencedor do debuff aplicado
@@ -185,6 +202,7 @@ public class CharacterStats : MonoBehaviour
 
         }
 
+        // Se for possível aplicar um debuff, configura os danos ao longo do tempo
         if (canApplyIgnite)
             _targetStats.SetupIgniteDamage(Mathf.RoundToInt(_fireDamage * .2f));
         if (canApplyShock)
@@ -194,8 +212,10 @@ public class CharacterStats : MonoBehaviour
         //No que for maior é o que é aplicado
     }
 
-    public void ApplyElements(bool _ignite, bool _frozen, bool _shock)
+    //responsavel por aplicar os efeitos de estado. Verifica se é possivel aplicar cada efeito, consoante o estado da personagem
+    public void ApplyElements(bool _ignite, bool _frozen, bool _shock) 
     {
+        // Verifica se é possível aplicar cada efeito secundário
         bool canApplyIgnite = !isIgnited && !isFrozen && !isShocked;
         bool canApplyFrozen = !isIgnited && !isFrozen && !isShocked;
         bool canApplyShock = !isIgnited && !isFrozen;
@@ -214,6 +234,7 @@ public class CharacterStats : MonoBehaviour
             frozenTimer = ailmentsDur;
             isFrozen = _frozen;
 
+            // Reduz a velocidade do personagem ao congelar
             float _slowPercent = .2f;
 
             GetComponent<Entity>().SlowEntity(_slowPercent, ailmentsDur);
@@ -229,6 +250,7 @@ public class CharacterStats : MonoBehaviour
             }
             else
             {
+                // Se já estiver chocado, atinge o alvo mais próximo
                 if (GetComponent<Player>() != null)
                     return;
 
@@ -267,11 +289,13 @@ public class CharacterStats : MonoBehaviour
 
     private void HitShockClosest()
     {
+        // Obtém todos os colisores próximos
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 25);
 
         float closestDis = Mathf.Infinity;
         Transform closestEnemy = null;
 
+        // Encontra o inimigo mais próximo
         foreach (var hit in colliders)
         {
             if (hit.GetComponent<Enemy>() != null && Vector2.Distance(transform.position, hit.transform.position) > 1)
@@ -285,11 +309,12 @@ public class CharacterStats : MonoBehaviour
                 }
             }
 
+            // Se não encontrar nenhum inimigo, ataca a própria entidade
             if (closestEnemy == null) //se nao quisermos este disparo para o 2nd target, comentar estar duas linhas
                 closestEnemy = transform;
         }
 
-        if (closestEnemy != null)
+        if (closestEnemy != null)  // Cria e configura um ataque de choque
         {
             GameObject newShockStrike = Instantiate(shockStrikePrefab, transform.position, Quaternion.identity);
             newShockStrike.GetComponent<ThunderStrike_Controller>().Setup(shockDamage, closestEnemy.GetComponent<CharacterStats>());
@@ -301,14 +326,14 @@ public class CharacterStats : MonoBehaviour
     public void SetupShockDamage(int _damage) => shockDamage = _damage;
 
     #endregion
-    public virtual void TakeDamage(int _damage)
+    public virtual void TakeDamage(int _damage) // Método chamado ao receber dano físico
     {
-        DecreaseHealthBy(_damage);
+        DecreaseHealthBy(_damage); // Reduz a saúde com base no dano físico
 
         GetComponent<Entity>().DamageImpact(); //em vez de termos separadamente no playerstats e enemystats colocamos este metodo que funciona por override
         fx.StartCoroutine("FlashFX");
 
-        if (_currentHealth < 0 && !isDead)
+        if (_currentHealth < 0 && !isDead)  // Verifica se o personagem morreu
             Die();
     }
 
@@ -316,7 +341,7 @@ public class CharacterStats : MonoBehaviour
     {
         _currentHealth += _amount;
 
-        if(_currentHealth > GetMaxHealthValue())
+        if(_currentHealth > GetMaxHealthValue()) // Garante que a life não ultrapasse o máximo
             _currentHealth = GetMaxHealthValue();
 
         if(onHealthChange != null)
@@ -325,6 +350,11 @@ public class CharacterStats : MonoBehaviour
 
     protected virtual void DecreaseHealthBy(int _damage)
     {
+        if (isVulnerable)
+        {
+            _damage = Mathf.RoundToInt(_damage * 1.2f);
+        }
+
         _currentHealth -= _damage;
 
         if(onHealthChange != null)
@@ -337,40 +367,50 @@ public class CharacterStats : MonoBehaviour
     }
 
     #region Stat calculation
-    private int ArmorMethod(CharacterStats _targetStats, int totalDamage) //onde contem o armor stats e values e o efeito de frozen
+    // Calcula o dano físico considerando a armadura do alvo
+    protected int ArmorMethod(CharacterStats _targetStats, int totalDamage) //onde contem o armor stats e values e o efeito de frozen
     {
-        if (_targetStats.isFrozen)
+        if (_targetStats.isFrozen) // Se o alvo estiver congelado, reduz o dano com base na armadura
             totalDamage -= Mathf.RoundToInt(_targetStats.armor.GetValue() * .8f);
         else
             totalDamage -= _targetStats.armor.GetValue();
 
 
-        totalDamage = Mathf.Clamp(totalDamage, 0, int.MaxValue);
+        totalDamage = Mathf.Clamp(totalDamage, 0, int.MaxValue); // Garante que o dano não seja negativo
         return totalDamage;
     }
 
-    private int TargetResistance(CharacterStats _targetStats, int totalMagicDamage)
+    private int TargetResistance(CharacterStats _targetStats, int totalMagicDamage) // Aplica resistência mágica ao dano mágico
     {
+        // Reduz o dano mágico com base na resistência mágica do alvo e sua inteligência
         totalMagicDamage -= _targetStats.magicResistance.GetValue() + (_targetStats.intelligence.GetValue() * 3);
-        totalMagicDamage = Mathf.Clamp(totalMagicDamage, 0, int.MaxValue);
+        totalMagicDamage = Mathf.Clamp(totalMagicDamage, 0, int.MaxValue);  // Garante que o dano mágico não seja negativo
         return totalMagicDamage;
     }
-    private bool AvoidAttacks(CharacterStats _targetStats) //onde contem o evasion stats e o efeito de shocked
+
+    public virtual void OnEvasion()
     {
-        int totalEvasion = _targetStats.evasion.GetValue() + _targetStats.agility.GetValue();
+
+    }
+    protected bool AvoidAttacks(CharacterStats _targetStats) //onde contem o evasion stats e o efeito de shocked
+    {
+        int totalEvasion = _targetStats.evasion.GetValue() + _targetStats.agility.GetValue(); //Calcula a esquiva total considerando a agilidade do alvo e o efeito de choque
 
         if (isShocked)
             totalEvasion += 20;
 
+        // Gera um número aleatório entre 0 e 100
+        // Se o número for menor que a esquiva total, o ataque é evitado
         if (Random.Range(0, 100) < totalEvasion)
         {
+            _targetStats.OnEvasion();
             return true;
         }
 
         return false;
     }
 
-    private bool CriticalChance()
+    protected bool CriticalChance()
     {
         int totalCritChance = critChance.GetValue() + agility.GetValue();
 
@@ -382,7 +422,7 @@ public class CharacterStats : MonoBehaviour
 
     }
 
-    private int CalculeCriticalDamage(int _damage)
+    protected int CalculeCriticalDamage(int _damage)
     {
         float totalCritPower = (critPower.GetValue() + strength.GetValue()) * .01f; //esta em () para calcular a %
         float critDamage = _damage * totalCritPower;

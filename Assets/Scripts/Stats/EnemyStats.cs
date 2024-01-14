@@ -6,6 +6,7 @@ public class EnemyStats : CharacterStats
 {
     private Enemy enemy;
     private ItemDrop enemyDrop;
+    public Stat expDropAmount;
 
     [Header("Level details")]
     [SerializeField] private int level = 1;
@@ -15,9 +16,10 @@ public class EnemyStats : CharacterStats
 
     protected override void Start()
     {
-        ApplyLevelModifiers();
+        expDropAmount.DefaultValues(100);
+        ApplyLevelModifiers(); //para aplicar os modificadores com base no nivel do jogo
 
-        base.Start();
+        base.Start(); //Chama o método base.Start() para garantir que a inicialização da classe base (CharacterStats) seja executada.
 
         enemy = GetComponent<Enemy>();
         enemyDrop = GetComponent<ItemDrop>();
@@ -43,6 +45,8 @@ public class EnemyStats : CharacterStats
         Modify(iceDamage);
         Modify(lightningDamage);
 
+        Modify(expDropAmount);
+
     }
 
     private void Modify(Stat _stat)
@@ -55,7 +59,7 @@ public class EnemyStats : CharacterStats
         }
     }
 
-    public override void TakeDamage(int _damage)
+    public override void TakeDamage(int _damage) //Sobrescreve o método da classe base para adicionar comportamentos adicionais quando o inimigo sofre dano.
     {
         base.TakeDamage(_damage);
     }
@@ -65,6 +69,7 @@ public class EnemyStats : CharacterStats
         base.Die();
         enemy.Die();
 
+        PlayerManager.instance.experience += expDropAmount.GetValue(); //-> para usar em gold, souls wtv
         enemyDrop.GenerateDrop();
     }
 }

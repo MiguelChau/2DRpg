@@ -22,6 +22,7 @@ public class EntityFX : MonoBehaviour
         originalMat = spriteRenderer.material;
     }
 
+    //Torna a entidade transparente ou não
     public void MakeTransparent(bool _transparent)
     {
         if (_transparent)
@@ -32,12 +33,14 @@ public class EntityFX : MonoBehaviour
 
     IEnumerator FlashFX()
     {
+        //Armazena o material atual e aplica o material no Hit
         spriteRenderer.material = hitMat;
         Color _currentColor = spriteRenderer.color;
         spriteRenderer.color = Color.white;
 
         yield return new WaitForSeconds(fxDuration);
 
+        //Restaura a cor original
         spriteRenderer.color = _currentColor;
         spriteRenderer.material = originalMat;
 
@@ -51,6 +54,7 @@ public class EntityFX : MonoBehaviour
             spriteRenderer.color = Color.red;
     }
 
+    //Cancela a mudança de cor programada
     private void CancelColorChange()
     {
         CancelInvoke();

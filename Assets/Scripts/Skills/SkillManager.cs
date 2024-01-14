@@ -12,6 +12,9 @@ public class SkillManager : MonoBehaviour
 
     public Blackhole_Skill blackhole { get; private set; } //ref habilidade de blackhole
     public Crystal_Skill1 crystal { get; private set; }
+    public ParrySkill parry { get; private set; }
+
+    public Dodge_Skill dodge { get; private set; }
 
     private void Awake() //este awake grante que apenas exista uma instancia de skillmanager no jogo
     {
@@ -28,5 +31,7 @@ public class SkillManager : MonoBehaviour
         sword = GetComponent<Sword_Skill>();
         blackhole = GetComponent<Blackhole_Skill>();
         crystal = GetComponent<Crystal_Skill1>();
+        parry = GetComponent<ParrySkill>();
+        dodge = GetComponent<Dodge_Skill>();
     }
 }

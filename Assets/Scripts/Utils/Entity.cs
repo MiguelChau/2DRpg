@@ -54,7 +54,7 @@ public class Entity : MonoBehaviour
 
     public virtual void SlowEntity(float _slowPercent, float _slowDur)
     {
-
+        Debug.Log("slow freeze");
     }
 
     public virtual void ReturnDefaultSpeed()

@@ -5,7 +5,7 @@ using UnityEngine;
 //responsavel para todas as habilidades que vao herdar (herança).
 public class Skill : MonoBehaviour
 {
-    [SerializeField] protected float cooldown;
+    public float cooldown;
     protected float cooldownTimer;
 
     protected Player player;
@@ -13,10 +13,17 @@ public class Skill : MonoBehaviour
     protected virtual void Start()
     {
         player = PlayerManager.instance.player;
+
+        CheckUnlock();
     }
     protected virtual void Update()
     {
         cooldownTimer -= Time.deltaTime;
+    }
+
+    protected virtual void CheckUnlock()
+    {
+
     }
 
     public virtual bool CanUseSkill()

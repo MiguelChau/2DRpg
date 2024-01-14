@@ -23,15 +23,13 @@ public class PlayerGroundedState : PlayerStates
     {
         base.Update();
 
-        if(Input.GetKeyDown(KeyCode.R)) 
-        {
+        if(Input.GetKeyDown(KeyCode.R) && player.skill.blackhole.blackholeUnlocked) 
             stateMachine.ChangeState(player.blackHoleState);
-        }
 
-        if (Input.GetKeyDown(KeyCode.Mouse1) && HasNoSword())
+        if (Input.GetKeyDown(KeyCode.Mouse1) && HasNoSword() && player.skill.sword.swordUnlocked)
             stateMachine.ChangeState(player.aimSwordState);
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha2) && player.skill.parry.parryUnlocked)
             stateMachine.ChangeState(player.counterAttackState);
 
         if (Input.GetKeyDown(KeyCode.Alpha1)) //Se a tecla 1 for pressionado, muda o estado para ataque primário

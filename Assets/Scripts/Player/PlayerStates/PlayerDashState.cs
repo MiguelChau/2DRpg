@@ -12,7 +12,7 @@ public class PlayerDashState : PlayerStates
     {
         base.Enter();
 
-        player.skill.clone.CreateCloneOnDashStart(); //usando o singleton de skill manager
+        player.skill.dash.CloneOnDash(); //usando o singleton de skill manager
 
         stateTimer = player.dashDur; 
     }
@@ -21,7 +21,7 @@ public class PlayerDashState : PlayerStates
     {
         base.Exit();
 
-        player.skill.clone.CreateCloneOnDashOver();
+        player.skill.dash.CloneOnArrivalDash();
         player.SetVelocity(0, rb.velocity.y);
     }
 
