@@ -17,6 +17,8 @@ public class PrimaryAttackState : PlayerStates
     public override void Enter()
     {
         base.Enter();
+
+        
         xInput = 0; //para resolver o bug do attack direction
 
         if (comboCounter > 2 || Time.time >= lastTimeAttacked + comboWindow) //Verifica se o combocounter é maior que 2 ou se ja passou o tempo da janela de combo

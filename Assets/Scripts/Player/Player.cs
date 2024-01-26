@@ -26,6 +26,7 @@ public class Player : Entity
     
     public SkillManager skill { get; private set; }
     public GameObject sword { get; private set; }
+    public PlayerFX fx { get; private set; }
 
     #region States 
     //Instancia os diferentes estados do jogador no metodo do Awake
@@ -74,6 +75,7 @@ public class Player : Entity
     {
         base.Start();
 
+        fx = GetComponent<PlayerFX>();
         skill = SkillManager.instance;
 
 
@@ -87,6 +89,9 @@ public class Player : Entity
 
     protected override void Update()
     {
+        if (Time.timeScale == 0)
+            return;
+
         base.Update();
 
         stateMachine.currentState.Update();
@@ -170,8 +175,13 @@ public class Player : Entity
     {
         base.Die();
 
+        AudioManager.Instance.PlaySFX(6, null);
         stateMachine.ChangeState(deadState);
     }
 
+    protected override void SetupZeroKnockBackPower()
+    {
+        knockBackPower = new Vector2(0, 0);
+    }
 
 }

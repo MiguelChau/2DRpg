@@ -22,7 +22,7 @@ public class SkeletonGroundState : EnemyStates
     {
         base.Update();
 
-        if (enemy.IsPlayerDetected() || Vector2.Distance(enemy.transform.position, player.position) < 2)
+        if (enemy.IsPlayerDetected() || Vector2.Distance(enemy.transform.position, player.position) < enemy.aggroDist)
             enemyStateMachine.ChangeState(enemy.battleState);
     }
 

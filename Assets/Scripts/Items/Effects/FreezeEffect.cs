@@ -8,10 +8,10 @@ public class FreezeEffect : ItemEffect
 
     public override void ExecuteEffect(Transform _transform)
     {
-        PlayerStats playerStats = PlayerManager.instance.GetComponent<PlayerStats>();
+        PlayerStats playerStats = PlayerManager.instance.player.GetComponent<PlayerStats>();
 
         if (playerStats._currentHealth > playerStats.GetMaxHealthValue() * .1f)
-            return; 
+            return;
 
         if (!Inventory.Instance.UseArmor())
             return;
@@ -21,7 +21,6 @@ public class FreezeEffect : ItemEffect
         foreach (var hit in colliders)
         {
             hit.GetComponent<Enemy>()?.FreezeTimeFor(dur);
-
         }
     }
 }

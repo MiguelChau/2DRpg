@@ -6,7 +6,7 @@ using UnityEngine;
 public class Skill : MonoBehaviour
 {
     public float cooldown;
-    protected float cooldownTimer;
+    public float cooldownTimer;
 
     protected Player player;
 
@@ -35,7 +35,7 @@ public class Skill : MonoBehaviour
             return true;
         }
 
-        Debug.Log("skill in CD");
+        player.fx.CreatePopUp("Cooldown");
         return false;
     }
 

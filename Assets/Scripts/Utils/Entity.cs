@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
@@ -7,25 +6,28 @@ public class Entity : MonoBehaviour
     #region COMPONENTS
     public Animator anim { get; private set; }
     public Rigidbody2D rb { get; private set; }
-    public EntityFX fx { get; private set; }
-    public SpriteRenderer sr { get; private set; }  
+
+    public SpriteRenderer sr { get; private set; }
     public CharacterStats stats { get; private set; }
     public CapsuleCollider2D capsule { get; private set; }
     #endregion
 
     [Header("Knockback")]
-    [SerializeField] protected Vector2 knockBackDirection;
-    [SerializeField] protected float knockBackDuration;
+    [SerializeField] protected Vector2 knockBackPower = new Vector2(7, 12);
+    [SerializeField] protected Vector2 knockBackOffset = new Vector2(.5f, 2f);
+    [SerializeField] protected float knockBackDuration = .07f;
     protected bool isKnocked;
 
     [Header("Collision")] //variaveis de detenção de colisao, do chão e das paredes
     public Transform attackCheck;
-    public float attackCheckRadius;
+    public float attackCheckRadius = 1.2f;
     [SerializeField] protected Transform groundCheck;
-    [SerializeField] protected float groundCheckDis;
+    [SerializeField] protected float groundCheckDis = 1;
     [SerializeField] protected Transform wallCheck;
-    [SerializeField] protected float wallCheckDis;
+    [SerializeField] protected float wallCheckDis = .8f;
     [SerializeField] protected LayerMask whatIsGround;
+
+    public int knockBackDir { get; private set; }
 
     public int facingDir { get; private set; } = 1;
     private bool facingRight = true;
@@ -36,12 +38,11 @@ public class Entity : MonoBehaviour
     {
 
     }
-    
+
     protected virtual void Start()
     {
-        sr= GetComponentInChildren<SpriteRenderer>();
+        sr = GetComponentInChildren<SpriteRenderer>();
         anim = GetComponentInChildren<Animator>();
-        fx = GetComponent<EntityFX>();
         rb = GetComponent<Rigidbody2D>();
         stats = GetComponent<CharacterStats>();
         capsule = GetComponent<CapsuleCollider2D>();
@@ -63,15 +64,33 @@ public class Entity : MonoBehaviour
     }
 
     public virtual void DamageImpact() => StartCoroutine("HitKnockBack");
+    public virtual void SetupKnockBackDir(Transform _dmgDir)
+    {
+        if (_dmgDir.position.x > transform.position.x)
+            knockBackDir = -1;
+        else if (_dmgDir.position.x < transform.position.x)
+            knockBackDir = 1;
+    }
+
+    public void SetupKnockBackPower(Vector2 _knockbackpower) => knockBackPower = _knockbackpower;
 
     protected virtual IEnumerator HitKnockBack()
     {
         isKnocked = true;
 
-        rb.velocity = new Vector2(knockBackDirection.x * -facingDir, knockBackDirection.y);
+        float xOffset = Random.Range(knockBackOffset.x, knockBackOffset.y);
+
+        if (knockBackPower.x > 0 || knockBackPower.y > 0) //esta linha faz com que o player seja imune a parar quando é atacado
+            rb.velocity = new Vector2((knockBackPower.x + xOffset) *  knockBackDir, knockBackPower.y);
 
         yield return new WaitForSeconds(knockBackDuration);
         isKnocked = false;
+        SetupZeroKnockBackPower();
+    }
+
+    protected virtual void SetupZeroKnockBackPower()
+    {
+        Debug.Log("Player knock");
     }
 
     #region Velocity
@@ -105,13 +124,21 @@ public class Entity : MonoBehaviour
             onFlipped();
     }
 
-    public void FlipRotate(float _x)
+    public virtual void FlipRotate(float _x)
     {
         if (_x > 0 && !facingRight)
             Flip();
         else if (_x < 0 && facingRight)
             Flip();
     }
+    public virtual void SetupDefaultFacingDir(int _dir)
+    {
+        facingDir = _dir;
+
+        if (facingDir == -1)
+            facingRight = false;
+    }
+
     #endregion
 
     #region Collision
@@ -121,12 +148,12 @@ public class Entity : MonoBehaviour
     protected virtual void OnDrawGizmos()
     {
         Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDis));
-        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDis, wallCheck.position.y));
+        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDis * facingDir, wallCheck.position.y));
         Gizmos.DrawWireSphere(attackCheck.position, attackCheckRadius);
     }
     #endregion
 
- 
+
 
     public virtual void Die()
     {

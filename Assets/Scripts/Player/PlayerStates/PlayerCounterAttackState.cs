@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCounterAttackState : PlayerStates
@@ -17,7 +15,7 @@ public class PlayerCounterAttackState : PlayerStates
         createClone = true;
         stateTimer = player.counterAttackDur;
         player.anim.SetBool("SucessCounter", false);
-        
+
     }
 
     public override void Exit()
@@ -29,22 +27,29 @@ public class PlayerCounterAttackState : PlayerStates
     {
         base.Update();
 
-        player.SetZeroVelocity();   
+        player.SetZeroVelocity();
 
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.attackCheck.position, player.attackCheckRadius);
 
         foreach (var hit in colliders)
         {
+
+            if (hit.GetComponent<Arrow_Controller>() != null)
+            {
+                hit.GetComponent<Arrow_Controller>().FlipArrow();
+                SucessfulCounter();
+            }
+
+
             if (hit.GetComponent<Enemy>() != null)
             {
-                if(hit.GetComponent<Enemy>().CanBeStunned()) 
+                if (hit.GetComponent<Enemy>().CanBeStunned())
                 {
-                    stateTimer = 10;
-                    player.anim.SetBool("SucessCounter", true);
+                    SucessfulCounter();
 
                     player.skill.parry.UseSkill();
 
-                    if(createClone)
+                    if (createClone)
                     {
                         createClone = false;
                         player.skill.parry.DoMirageOnParry(hit.transform);
@@ -55,5 +60,11 @@ public class PlayerCounterAttackState : PlayerStates
 
         if (stateTimer < 0 || triggerCalled)
             stateMachine.ChangeState(player.idleState);
+    }
+
+    private void SucessfulCounter()
+    {
+        stateTimer = 10;
+        player.anim.SetBool("SucessCounter", true);
     }
 }

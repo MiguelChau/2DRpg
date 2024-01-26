@@ -1,31 +1,40 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(CapsuleCollider2D))]
+[RequireComponent(typeof(EnemyStats))]
+[RequireComponent(typeof(EntityFX))]
+[RequireComponent(typeof(ItemDrop))]
 public class Enemy : Entity
 {
     [SerializeField] protected LayerMask whereIsPlayer; //Para detectar o player
 
     [Header("Stunned Info")]
-    public float stunnedDur; //duração do stun
-    public Vector2 stunnedDir; //direçao do stun
+    public float stunnedDur = 1; //duração do stun
+    public Vector2 stunnedDir = new Vector2(10, 12); //direçao do stun
     protected bool canBeStunned; //indicação se pode ser stunned
     [SerializeField] protected GameObject counterImage; //referencia a um objecto de imagem para o counterattack
 
     [Header("Move Info")]
-    public float moveSpeed; //velocidade de movimento
-    public float idleTime; //tempo parado
-    public float battleTime; //tempo em batalha
+    public float moveSpeed = 2; //velocidade de movimento
+    public float idleTime = 2; //tempo parado
+    public float battleTime = 7; //tempo em batalha
     private float defaultMoveSpeed;
 
     [Header("Attack Info")]
-    public float attackDist;
+    public float aggroDist = 2;
+    public float attackDist = 2;
     public float attackCooldown;
+    public float minAttackCD = 1;
+    public float maxAttackCD = 2;
     [HideInInspector] public float lastTimeAttacked; //para manter o tempo do ultimo ataque
 
 
     public EnemyStateMachine stateMachine { get; private set; }
-    public string lastAnimBoolName {  get; private set; } //para parar a animaçao
+    public EntityFX fx { get; private set; }
+    private Player player;
+    public string lastAnimBoolName { get; private set; } //para parar a animaçao
 
     protected override void Awake()
     {
@@ -39,11 +48,13 @@ public class Enemy : Entity
     protected override void Start()
     {
         base.Start();
+
+        fx = GetComponent<EntityFX>();
     }
     protected override void Update()
     {
 
-        base .Update();
+        base.Update();
 
         stateMachine.currentState.Update();
 
@@ -67,14 +78,14 @@ public class Enemy : Entity
     }
     public virtual void FreezeTime(bool _timeFrozen) //metodo para desacelarar/congelar o inimigo. No caso, a velocidade de movimento e animação estao como 0 para simular a desacelaraçao.
     {
-        if(_timeFrozen)
+        if (_timeFrozen)
         {
             moveSpeed = 0f;
             anim.speed = 0f;
         }
         else
         {
-            moveSpeed = defaultMoveSpeed; 
+            moveSpeed = defaultMoveSpeed;
             anim.speed = 1f;
         }
     }
@@ -98,13 +109,13 @@ public class Enemy : Entity
 
     public virtual void CloseCounterAttackWindow()
     {
-        canBeStunned= false;
+        canBeStunned = false;
         counterImage.SetActive(false);
     }
 
     public virtual bool CanBeStunned() //verifica se o inimigo pode ser stunned
     {
-        if(canBeStunned)
+        if (canBeStunned)
         {
             CloseCounterAttackWindow();
             return true;
@@ -115,6 +126,10 @@ public class Enemy : Entity
     #endregion
 
     public virtual void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
+    public virtual void AnimationSpecialAttackTrigger()
+    {
+
+    }
 
     protected override void OnDrawGizmos()
     {
@@ -125,5 +140,6 @@ public class Enemy : Entity
     }
 
     public virtual RaycastHit2D IsPlayerDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, 50, whereIsPlayer);
+
     // para detectar o player na direçao do inimigo
 }

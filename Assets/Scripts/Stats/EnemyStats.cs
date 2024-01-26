@@ -71,5 +71,7 @@ public class EnemyStats : CharacterStats
 
         PlayerManager.instance.experience += expDropAmount.GetValue(); //-> para usar em gold, souls wtv
         enemyDrop.GenerateDrop();
+
+        Destroy(gameObject, 1f);
     }
 }

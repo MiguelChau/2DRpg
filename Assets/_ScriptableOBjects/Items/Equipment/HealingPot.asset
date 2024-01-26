@@ -15,12 +15,12 @@ MonoBehaviour:
   itemType: 1
   itemName: HealingPot
   icon: {fileID: -410334530, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
-  dropChance: 0
+  itemID: 9d62f304e3a1da2438ce1ed5a2582b3d
+  dropChance: 60.8
   equipementType: 3
   itemCooldown: 20
   itemEffects:
   - {fileID: 11400000, guid: dfcb05374830cc147bfb10e95ac0fdfe, type: 2}
-  itemEffectDescription: Heals for 30% health. Cooldown 20 seconds.
   strength: 0
   agility: 0
   intelligence: 0

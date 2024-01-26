@@ -9,7 +9,7 @@ public enum EquipementType
     Flask
 }
 
-[CreateAssetMenu(fileName = "New Equipement Data", menuName = "Data/Equipement")]
+[CreateAssetMenu(fileName = "New Item Data", menuName = "Data/Equipement")]
 public class ItemDataEquipement : ItemData
 {
     public EquipementType equipementType;
@@ -41,6 +41,7 @@ public class ItemDataEquipement : ItemData
     public int lightningDamage;
 
     [Header("Craft Requirements")]
+
     public List<InventoryItem> craftMaterials;
 
     private int descriptionLength;

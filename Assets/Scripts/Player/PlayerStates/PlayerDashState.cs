@@ -14,7 +14,9 @@ public class PlayerDashState : PlayerStates
 
         player.skill.dash.CloneOnDash(); //usando o singleton de skill manager
 
-        stateTimer = player.dashDur; 
+        stateTimer = player.dashDur;
+
+        player.stats.InvencibleTime(true);
     }
 
     public override void Exit()
@@ -23,6 +25,8 @@ public class PlayerDashState : PlayerStates
 
         player.skill.dash.CloneOnArrivalDash();
         player.SetVelocity(0, rb.velocity.y);
+
+        player.stats.InvencibleTime(false);
     }
 
     public override void Update()
@@ -38,5 +42,7 @@ public class PlayerDashState : PlayerStates
 
         if (stateTimer < 0) //quando acabar o temporizador muda para o idlestate
             stateMachine.ChangeState(player.idleState);
+
+        player.fx.CreateAfterImage();
     }
 }

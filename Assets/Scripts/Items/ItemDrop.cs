@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,24 +5,33 @@ public class ItemDrop : MonoBehaviour
 {
     [SerializeField] private int possibleItemDrop;
     [SerializeField] private ItemData[] possibleDrop;
-    private List<ItemData> possibleDropList = new List<ItemData>();
+    private List<ItemData> dropList = new List<ItemData>();
 
     [SerializeField] private GameObject dropPrefab;
 
     public virtual void GenerateDrop()
     {
-        for(int i = 0; i < possibleDrop.Length; i++)
+        if (possibleDrop.Length <= 0)
+            return;
+
+        for (int i = 0; i < possibleDrop.Length; i++)
         {
-            if(Random.Range(0, 100) <= possibleDrop[i].dropChance)
-                possibleDropList.Add(possibleDrop[i]);
+            if (Random.Range(0, 100) <= possibleDrop[i].dropChance)
+                dropList.Add(possibleDrop[i]);
         }
 
-        for(int i = 0; i < possibleItemDrop; i++)
-        {
-            ItemData randomItem = possibleDropList[Random.Range(0,possibleDropList.Count - 1)];
 
-            possibleDropList.Remove(randomItem);
+        for (int i = 0; i < possibleItemDrop; i++)
+        {
+            if (dropList.Count <= 0)
+                return;
+
+            ItemData randomItem = dropList[Random.Range(0, dropList.Count)];
+
+            dropList.Remove(randomItem);
             DropItem(randomItem);
+
+
         }
     }
 

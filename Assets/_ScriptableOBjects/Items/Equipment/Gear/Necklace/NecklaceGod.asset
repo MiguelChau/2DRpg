@@ -15,7 +15,8 @@ MonoBehaviour:
   itemType: 1
   itemName: 
   icon: {fileID: -245851270, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
-  dropChance: 0
+  itemID: 8c847c5090a1b0d40a0fcdfb50cf5dff
+  dropChance: 6.3
   equipementType: 2
   itemCooldown: 0
   itemEffects:
@@ -27,7 +28,7 @@ MonoBehaviour:
   damage: 0
   critChance: 0
   critPower: 0
-  maxHealth: 20
+  health: 0
   armor: 0
   evasion: 0
   magicResistance: 15

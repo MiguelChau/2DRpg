@@ -17,6 +17,9 @@ public class SkeletonBattleState : EnemyStates
         base.Enter();
 
         player = PlayerManager.instance.player.transform;
+
+        if (player.GetComponent<PlayerStats>().isDead)
+            enemyStateMachine.ChangeState(enemy.moveState);
     }
     public override void Update()
     {
@@ -55,6 +58,7 @@ public class SkeletonBattleState : EnemyStates
     {
         if(Time.time >= enemy.lastTimeAttacked + enemy.attackCooldown)
         {
+            enemy.attackCooldown = Random.Range(enemy.minAttackCD, enemy.maxAttackCD);
             enemy.lastTimeAttacked = Time.time;
             return true;
         }

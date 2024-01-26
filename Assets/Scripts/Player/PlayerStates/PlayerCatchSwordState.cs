@@ -16,6 +16,9 @@ public class PlayerCatchSwordState : PlayerStates
 
         sword = player.sword.transform;
 
+        player.fx.PlayDustFX();
+        player.fx.ScreenShake(player.fx.shakeSwordPower);
+
         if (player.transform.position.x > sword.position.x && player.facingDir == 1)
             player.Flip();
         else if (player.transform.position.x < sword.position.x && player.facingDir == -1)

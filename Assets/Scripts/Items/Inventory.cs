@@ -38,6 +38,7 @@ public class Inventory : MonoBehaviour, ISaveManager
     private float armorCooldown;
 
     [Header("Data Base")]
+    public List<ItemData> itemDataBase;
     public List<InventoryItem> loadedItems;
     public List<ItemDataEquipement> loadedEquipment;
 
@@ -346,10 +347,10 @@ public class Inventory : MonoBehaviour, ISaveManager
     }
     public void LoadData(GameData _data)
     {
-#if UNITY_EDITOR
+
         foreach (KeyValuePair<string, int> pair in _data.inventory)
         {
-            foreach (var item in GetItemDataBase())
+            foreach (var item in itemDataBase)
             {
                 if (item != null && item.itemID == pair.Key)
                 {
@@ -363,7 +364,7 @@ public class Inventory : MonoBehaviour, ISaveManager
 
         foreach (string loadedItemId in _data.equipmentID)
         {
-            foreach (var item in GetItemDataBase())
+            foreach (var item in itemDataBase)
             {
                 if (item != null && loadedItemId == item.itemID)
                 {
@@ -371,12 +372,12 @@ public class Inventory : MonoBehaviour, ISaveManager
                 }
             }
         }
-#endif
+
     }
 
     public void SaveData(ref GameData _data)
     {
-#if UNITY_EDITOR
+
         _data.inventory.Clear();
         _data.equipmentID.Clear();
 
@@ -394,10 +395,13 @@ public class Inventory : MonoBehaviour, ISaveManager
         {
             _data.equipmentID.Add(pair.Key.itemID);
         }
-#endif
+
     }
 
+
 #if UNITY_EDITOR
+    [ContextMenu("Fill up item data base")]
+    private void FillUpItemDataBase() => itemDataBase = new List<ItemData>(GetItemDataBase());
     private List<ItemData> GetItemDataBase()
     {
         List<ItemData> itemDataBase = new List<ItemData>();
@@ -414,6 +418,3 @@ public class Inventory : MonoBehaviour, ISaveManager
     }
 #endif
 }
-    
-
-

@@ -36,10 +36,25 @@ public class PlayerStats : CharacterStats
         //Obtém o equipamento atual do tipo Armor do inventário e aplica seu efeito no jogador.
         base.DecreaseHealthBy(_damage);
 
+        if (isDead)
+            return;
+
+        if (_damage > GetMaxHealthValue() * .3f)
+        {
+            player.SetupKnockBackPower(new Vector2(10, 5));
+            player.fx.ScreenShake(player.fx.shakeHighDamage);
+
+            int randomSound = Random.Range(34, 35);
+            AudioManager.Instance.PlaySFX(randomSound, null);
+            
+        }
+
         ItemDataEquipement currentArmor = Inventory.Instance.GetEquipment(EquipementType.Armor);
 
-        if(currentArmor != null)
+        if (currentArmor != null)
+        {
             currentArmor.Effect(player.transform);
+        }
     }
 
     public override void OnEvasion()

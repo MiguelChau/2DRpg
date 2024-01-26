@@ -3,20 +3,15 @@ using UnityEngine.UI;
 
 public class HealthBar_UI : MonoBehaviour
 {
-    private Entity entity;
-    private CharacterStats myStats;
+    private Entity entity => GetComponentInParent<Entity>();
+    private CharacterStats myStats => GetComponentInParent<CharacterStats>();
     private RectTransform rectTransform;
     private Slider slider;
 
     private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
-        entity = GetComponentInParent<Entity>();
         slider = GetComponentInChildren<Slider>();
-        myStats = GetComponentInParent<CharacterStats>();
-
-        entity.onFlipped += FlipUI;
-        myStats.onHealthChange += UpdateHealthUI;
 
         UpdateHealthUI();
     }
@@ -27,13 +22,21 @@ public class HealthBar_UI : MonoBehaviour
         slider.value = myStats._currentHealth;
     }
 
-    private void FlipUI() => rectTransform.Rotate(0, 180, 0);
+    private void OnEnable()
+    {
+        entity.onFlipped += FlipUI;
+        myStats.onHealthChange += UpdateHealthUI;
+    }
 
     private void OnDisable()
     {
-        entity.onFlipped -= FlipUI;
-        myStats.onHealthChange -= UpdateHealthUI;
+        if (entity != null)
+            entity.onFlipped -= FlipUI;
+
+        if (myStats != null)
+            myStats.onHealthChange -= UpdateHealthUI;
     }
+    private void FlipUI() => rectTransform.Rotate(0, 180, 0);
 
 
 }

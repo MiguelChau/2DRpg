@@ -15,7 +15,8 @@ MonoBehaviour:
   itemType: 1
   itemName: Golden Neck
   icon: {fileID: -878758905, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
-  dropChance: 0
+  itemID: 30d13b971a1b2f24cb1f1421af4c8caa
+  dropChance: 26.7
   equipementType: 2
   itemCooldown: 0
   itemEffects: []

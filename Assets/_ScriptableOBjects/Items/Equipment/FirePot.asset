@@ -15,7 +15,8 @@ MonoBehaviour:
   itemType: 1
   itemName: Fire flask
   icon: {fileID: 1073501139, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
-  dropChance: 0
+  itemID: 48875dd549317f34cb6dfa2c2a1053ce
+  dropChance: 34.1
   equipementType: 3
   itemCooldown: 0
   itemEffects:
@@ -27,7 +28,7 @@ MonoBehaviour:
   damage: 0
   critChance: 0
   critPower: 0
-  maxHealth: 0
+  health: 0
   armor: 0
   evasion: 0
   magicResistance: 0

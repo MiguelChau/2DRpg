@@ -68,6 +68,7 @@ public class CharacterStats : MonoBehaviour
     public System.Action onHealthChange; //ação que sera acionada sempre que a life mudar
 
     public bool isDead {  get; private set; }
+    public bool isInvencible { get; private set; }
     private bool isVulnerable;
 
     protected virtual void Start()
@@ -127,16 +128,25 @@ public class CharacterStats : MonoBehaviour
     //Responsavel por calcular e aplicar o dano ao alvo. Considera o dano fisico, a crit chance e reduçao do dano com base na armadura do alvo.
     public virtual void DoDamage(CharacterStats _targetStats) 
     {
+        bool critStrike = false;
+
+        if (_targetStats.isInvencible)
+            return;
+
         if (AvoidAttacks(_targetStats)) //verifica se o ataque foi evitado
             return;
+
+        _targetStats.GetComponent<Entity>().SetupKnockBackDir(transform);
 
         int totalDamage = damage.GetValue() + strength.GetValue(); //calcula o dano total 
 
         if (CriticalChance()) //verifica se ocorreu um critical strike
         {
             totalDamage = CalculeCriticalDamage(totalDamage);
+            critStrike = true;
         }
 
+        fx.CreateHitFX(_targetStats.transform, critStrike);
 
         totalDamage = ArmorMethod(_targetStats, totalDamage);
         _targetStats.TakeDamage(totalDamage);
@@ -328,6 +338,9 @@ public class CharacterStats : MonoBehaviour
     #endregion
     public virtual void TakeDamage(int _damage) // Método chamado ao receber dano físico
     {
+        if (isInvencible)
+            return;
+
         DecreaseHealthBy(_damage); // Reduz a saúde com base no dano físico
 
         GetComponent<Entity>().DamageImpact(); //em vez de termos separadamente no playerstats e enemystats colocamos este metodo que funciona por override
@@ -357,6 +370,9 @@ public class CharacterStats : MonoBehaviour
 
         _currentHealth -= _damage;
 
+        if (_damage > 0)
+            fx.CreatePopUp(_damage.ToString());
+
         if(onHealthChange != null)
             onHealthChange();
     }
@@ -365,6 +381,15 @@ public class CharacterStats : MonoBehaviour
     {
         isDead = true;
     }
+
+    public void FallingDeadZone()
+    {
+        if (!isDead)
+            Die();
+    }
+
+    public void InvencibleTime(bool _invencible) => isInvencible = _invencible;
+
 
     #region Stat calculation
     // Calcula o dano físico considerando a armadura do alvo

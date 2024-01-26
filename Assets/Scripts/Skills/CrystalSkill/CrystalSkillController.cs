@@ -79,12 +79,16 @@ public class Crystal_Skill_Controller : MonoBehaviour
         foreach (var hit in colliders)
         {
             if (hit.GetComponent<Enemy>() != null)
+            {
+                hit.GetComponent<Entity>().SetupKnockBackDir(transform);
                 player.stats.DoMagicDamage(hit.GetComponent<CharacterStats>());
 
-            ItemDataEquipement equipNecklace = Inventory.Instance.GetEquipment(EquipementType.Necklace); //serve para que o efeito pretendido no necklace faça efeito
+                ItemDataEquipement equipNecklace = Inventory.Instance.GetEquipment(EquipementType.Necklace); //serve para que o efeito pretendido no necklace faça efeito
 
-            if (equipNecklace != null)
-                equipNecklace.Effect(hit.transform);
+                if (equipNecklace != null)
+                    equipNecklace.Effect(hit.transform);
+            }
+                
         }
     }
 

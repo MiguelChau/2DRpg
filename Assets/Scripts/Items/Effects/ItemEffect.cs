@@ -8,6 +8,6 @@ public class ItemEffect : ScriptableObject
     public string effectDescription;
     public virtual void ExecuteEffect(Transform _enemyPos)
     {
-        Debug.Log("Applied Effect");
+        Debug.Log("Effect executed!");
     }
 }
